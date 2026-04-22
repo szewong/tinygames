@@ -75,6 +75,92 @@
   // ---------- DOM ----------
   const boardEl = document.getElementById('board');
   const boardWrapEl = document.querySelector('.board-wrap');
+  const muteBtn = document.getElementById('mute-btn');
+
+  // ---------- Sound effects ----------
+  // Web Audio synthesis — zero asset bytes, works offline, no autoplay issues.
+  // iPad gotchas: AudioContext must be created / resumed inside a user gesture
+  // (handled by unlockAudio on first tap). iPad respects the silent switch for
+  // Web Audio, which is the expected behavior — users who want silence flip it.
+  const SFX = (() => {
+    let ctx = null;
+    let muted = false;
+    try { muted = localStorage.getItem('candy-muted') === '1'; } catch (_) {}
+
+    function ensureCtx() {
+      if (ctx) return ctx;
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      try { ctx = new AC(); } catch (_) { return null; }
+      return ctx;
+    }
+    function unlock() {
+      const c = ensureCtx();
+      if (c && c.state === 'suspended') c.resume().catch(() => {});
+    }
+
+    function tone(opts) {
+      if (muted) return;
+      const c = ensureCtx();
+      if (!c) return;
+      const {
+        freq, type = 'sine', dur = 0.1, vol = 0.18,
+        delay = 0, attack = 0.005, freqEnd,
+      } = opts;
+      const t0 = c.currentTime + delay;
+      const osc = c.createOscillator();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, t0);
+      if (freqEnd) {
+        osc.frequency.exponentialRampToValueAtTime(freqEnd, t0 + dur);
+      }
+      const g = c.createGain();
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.linearRampToValueAtTime(vol, t0 + attack);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      osc.connect(g);
+      g.connect(c.destination);
+      osc.start(t0);
+      osc.stop(t0 + dur + 0.03);
+    }
+
+    return {
+      unlock,
+      isMuted: () => muted,
+      setMuted(v) {
+        muted = v;
+        try { localStorage.setItem('candy-muted', v ? '1' : '0'); } catch (_) {}
+      },
+      select()  { tone({ freq: 880, dur: 0.07, vol: 0.12 }); },
+      swap()    {
+        tone({ freq: 520, dur: 0.09, vol: 0.14 });
+        tone({ freq: 780, dur: 0.11, vol: 0.14, delay: 0.07 });
+      },
+      revert()  { tone({ freq: 240, dur: 0.18, vol: 0.14, freqEnd: 140 }); },
+      clear(cascade = 1) {
+        const base = 420 + (Math.min(cascade, 5) - 1) * 90;
+        tone({ freq: base,       type: 'triangle', dur: 0.10, vol: 0.15, freqEnd: base * 1.6 });
+        tone({ freq: base * 2,   type: 'sine',     dur: 0.14, vol: 0.09, delay: 0.03 });
+      },
+      cascadeChime(n) {
+        const notes = [523.25, 659.26, 783.99, 1046.5]; // C5 E5 G5 C6
+        const idx = Math.min(notes.length - 1, n - 2);
+        tone({ freq: notes[Math.max(0, idx)], dur: 0.22, vol: 0.18 });
+      },
+      win() {
+        const notes = [523.25, 659.26, 783.99, 1046.5];
+        notes.forEach((f, i) => tone({ freq: f, dur: 0.22, vol: 0.2, delay: i * 0.11 }));
+      },
+      lose() {
+        const notes = [392, 329.63, 261.63]; // G4 E4 C4
+        notes.forEach((f, i) => tone({ freq: f, dur: 0.28, vol: 0.16, delay: i * 0.16 }));
+      },
+      newGame() {
+        tone({ freq: 587.33, dur: 0.10, vol: 0.14 });
+        tone({ freq: 880,    dur: 0.14, vol: 0.14, delay: 0.08 });
+      },
+    };
+  })();
   const scoreEl = document.getElementById('score');
   const movesEl = document.getElementById('moves');
   const targetEl = document.getElementById('target');
@@ -259,6 +345,7 @@
     selected = pos;
     const c = grid[pos.row][pos.col];
     if (c) c.el.classList.add('selected');
+    SFX.select();
   }
 
   function clearSelection() {
@@ -270,6 +357,7 @@
 
   async function attemptSwap(a, b) {
     busy = true;
+    SFX.swap();
 
     // Swap in data and animate position change
     const ca = grid[a.row][a.col];
@@ -287,6 +375,7 @@
       checkEndConditions();
     } else {
       // Swap back
+      SFX.revert();
       grid[a.row][a.col] = ca;
       grid[b.row][b.col] = cb;
       positionCandy(ca.el, a.row, a.col);
@@ -308,6 +397,8 @@
       }
       if (count === 0) break;
       cascade++;
+      SFX.clear(cascade);
+      if (cascade >= 2) SFX.cascadeChime(cascade);
 
       // Clear marked candies
       for (let r = 0; r < SIZE; r++) {
@@ -446,6 +537,7 @@
     endScore.textContent = score;
     endMoves.textContent = Math.max(0, moves);
     endModal.classList.add('show');
+    if (won) SFX.win(); else SFX.lose();
   }
 
   // ---------- Lifecycle ----------
@@ -464,10 +556,16 @@
     buildCellBackdrops();
     initBoard();
     updateHud();
+    SFX.newGame();
   }
 
   // ---------- Wiring ----------
+  function refreshMuteBtn() {
+    muteBtn.classList.toggle('muted', SFX.isMuted());
+  }
+
   function onBoardPointerDown(e) {
+    SFX.unlock();
     if (busy || gameOver) return;
     const rect = boardEl.getBoundingClientRect();
     if (rect.width === 0 || rect.height === 0) return;
@@ -483,11 +581,32 @@
 
   function setupEvents() {
     boardEl.addEventListener('pointerdown', onBoardPointerDown);
-    document.getElementById('btn-new').addEventListener('click', newGame);
+    document.getElementById('btn-new').addEventListener('click', () => {
+      SFX.unlock();
+      newGame();
+    });
     document.getElementById('btn-hint').addEventListener('click', () => {
+      SFX.unlock();
       if (!busy && !gameOver) flashHint();
     });
-    endBtn.addEventListener('click', newGame);
+    endBtn.addEventListener('click', () => { SFX.unlock(); newGame(); });
+
+    muteBtn.addEventListener('click', () => {
+      SFX.unlock();
+      SFX.setMuted(!SFX.isMuted());
+      refreshMuteBtn();
+      if (!SFX.isMuted()) SFX.select(); // confirmation blip when unmuting
+    });
+    refreshMuteBtn();
+
+    // Unlock audio on the very first pointer/touch anywhere (iOS requirement).
+    const firstTouch = () => {
+      SFX.unlock();
+      document.removeEventListener('pointerdown', firstTouch, true);
+      document.removeEventListener('touchstart', firstTouch, true);
+    };
+    document.addEventListener('pointerdown', firstTouch, true);
+    document.addEventListener('touchstart', firstTouch, true);
 
     helpBtn.addEventListener('click', () => helpModal.classList.add('show'));
     helpClose.addEventListener('click', () => helpModal.classList.remove('show'));

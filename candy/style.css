@@ -78,7 +78,7 @@ body {
   letter-spacing: 4px;
 }
 
-.help-btn, .back-btn {
+.help-btn, .back-btn, .icon-btn {
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -94,11 +94,25 @@ body {
   text-decoration: none;
   transition: all 0.2s;
   flex-shrink: 0;
+  padding: 0;
 }
-.help-btn:active, .back-btn:active {
+.help-btn:active, .back-btn:active, .icon-btn:active {
   background: var(--accent-light);
   border-color: var(--accent);
 }
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Toggle which speaker icon is visible based on mute state */
+.icon-btn .icon-on  { display: inline; }
+.icon-btn .icon-off { display: none; }
+.icon-btn.muted .icon-on  { display: none; }
+.icon-btn.muted .icon-off { display: inline; }
+.icon-btn.muted { color: var(--text-light); }
 
 /* --- Status bar --- */
 
@@ -410,7 +424,7 @@ body {
 
   .app { padding: 22px 36px; gap: 16px; }
   .title { letter-spacing: 8px; }
-  .help-btn, .back-btn { width: 60px; height: 60px; font-size: 28px; }
+  .help-btn, .back-btn, .icon-btn { width: 60px; height: 60px; font-size: 28px; }
 
   .status-bar { padding: 16px 24px; }
   .stat { min-width: 100px; }
