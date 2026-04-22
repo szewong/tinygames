@@ -124,10 +124,9 @@
     el.dataset.type = String(type);
     el.innerHTML = CANDY_SVGS[type];
     positionCandy(el, row, col);
-    el.addEventListener('pointerdown', (e) => {
-      e.preventDefault();
-      onCandyTap(row, col);
-    });
+    // No per-candy click handler — the board uses delegated pointerdown,
+    // so row/col are computed from the tap position and always match
+    // whichever candy currently occupies that cell.
     boardEl.appendChild(el);
     return { type, uid: nextUid++, el };
   }
@@ -367,10 +366,6 @@
           // Start above the board, then animate to final position
           el.style.left = (c * 12.5) + '%';
           el.style.top = ((r - SIZE) * 12.5) + '%';
-          el.addEventListener('pointerdown', ((rr, cc) => (e) => {
-            e.preventDefault();
-            onCandyTap(rr, cc);
-          })(r, c));
           boardEl.appendChild(el);
           grid[r][c] = { type, uid: nextUid++, el };
 
@@ -472,7 +467,22 @@
   }
 
   // ---------- Wiring ----------
+  function onBoardPointerDown(e) {
+    if (busy || gameOver) return;
+    const rect = boardEl.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const col = Math.floor((x / rect.width) * SIZE);
+    const row = Math.floor((y / rect.height) * SIZE);
+    if (row < 0 || row >= SIZE || col < 0 || col >= SIZE) return;
+    if (!grid[row] || !grid[row][col]) return;
+    e.preventDefault();
+    onCandyTap(row, col);
+  }
+
   function setupEvents() {
+    boardEl.addEventListener('pointerdown', onBoardPointerDown);
     document.getElementById('btn-new').addEventListener('click', newGame);
     document.getElementById('btn-hint').addEventListener('click', () => {
       if (!busy && !gameOver) flashHint();
