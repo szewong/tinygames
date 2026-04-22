@@ -598,6 +598,10 @@
     muteBtn.classList.toggle('muted', SFX.isMuted());
   }
 
+  // Pointer gesture state — a touch can resolve as either a tap or a swipe,
+  // decided on pointerup based on how far the finger moved.
+  let pointerStart = null;
+
   function onBoardPointerDown(e) {
     SFX.unlock();
     if (busy || gameOver) return;
@@ -610,11 +614,57 @@
     if (row < 0 || row >= SIZE || col < 0 || col >= SIZE) return;
     if (!grid[row] || !grid[row][col]) return;
     e.preventDefault();
-    onCandyTap(row, col);
+    pointerStart = {
+      pointerId: e.pointerId,
+      clientX: e.clientX, clientY: e.clientY,
+      row, col,
+      cellSize: rect.width / SIZE,
+    };
+    try { boardEl.setPointerCapture(e.pointerId); } catch (_) {}
+  }
+
+  function onBoardPointerUp(e) {
+    if (!pointerStart || pointerStart.pointerId !== e.pointerId) return;
+    const start = pointerStart;
+    pointerStart = null;
+    try { boardEl.releasePointerCapture(e.pointerId); } catch (_) {}
+
+    if (busy || gameOver) return;
+
+    const dx = e.clientX - start.clientX;
+    const dy = e.clientY - start.clientY;
+    const threshold = Math.max(14, start.cellSize * 0.3);
+    const moved = Math.max(Math.abs(dx), Math.abs(dy)) >= threshold;
+
+    if (!moved) {
+      // Short tap — use the existing tap-to-select / tap-adjacent-to-swap flow
+      onCandyTap(start.row, start.col);
+      return;
+    }
+
+    // Swipe — swap with the neighbor in the dominant direction
+    let dr = 0, dc = 0;
+    if (Math.abs(dx) > Math.abs(dy)) dc = dx > 0 ? 1 : -1;
+    else                              dr = dy > 0 ? 1 : -1;
+    const toR = start.row + dr;
+    const toC = start.col + dc;
+    if (toR < 0 || toR >= SIZE || toC < 0 || toC >= SIZE) return;
+    if (!grid[toR] || !grid[toR][toC]) return;
+
+    clearSelection();
+    attemptSwap({ row: start.row, col: start.col }, { row: toR, col: toC });
+  }
+
+  function onBoardPointerCancel(e) {
+    if (pointerStart && pointerStart.pointerId === e.pointerId) {
+      pointerStart = null;
+    }
   }
 
   function setupEvents() {
     boardEl.addEventListener('pointerdown', onBoardPointerDown);
+    boardEl.addEventListener('pointerup', onBoardPointerUp);
+    boardEl.addEventListener('pointercancel', onBoardPointerCancel);
     document.getElementById('btn-new').addEventListener('click', () => {
       SFX.unlock();
       newGame();
