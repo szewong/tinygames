@@ -730,9 +730,7 @@
     setupEvents();
     newGame();
 
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
-    }
+    // SW is registered by the inline update script in index.html
   }
 
   init();

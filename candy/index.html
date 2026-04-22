@@ -138,32 +138,52 @@
   </div>
 </div>
 
-<script src="candy.js"></script>
 <script>
-  if ('serviceWorker' in navigator) {
-    let reloading = false;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (reloading) return;
-      reloading = true;
-      location.reload();
-    });
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') {
-        navigator.serviceWorker.getRegistration()
-          .then(r => r && r.update())
-          .catch(() => {});
-      }
-    });
-  }
+  window.APP_VERSION = "{{APP_VERSION}}";
+  (function () {
+    const VERSION_URL = '../version.json';
+    const running = (typeof window.APP_VERSION === 'string') ? window.APP_VERSION : '';
+    const isStamped = running && !running.includes('{{');
 
-  fetch('../version.json', { cache: 'no-store' })
-    .then(r => r.ok ? r.json() : null)
-    .then(v => {
-      if (!v || !v.commit) return;
-      const el = document.getElementById('version-info');
-      if (el) el.textContent = `v ${v.commit} · ${v.date}`;
-    })
-    .catch(() => {});
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {});
+      let swReloaded = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (swReloaded) return;
+        swReloaded = true;
+        location.reload();
+      });
+    }
+
+    let reloadingForVersion = false;
+    async function checkForUpdate() {
+      try {
+        const r = await fetch(VERSION_URL + '?t=' + Date.now(), { cache: 'no-store' });
+        if (!r.ok) return;
+        const v = await r.json();
+        if (!v || !v.commit) return;
+        const info = document.getElementById('version-info');
+        if (info) info.textContent = 'v ' + v.commit + ' · ' + v.date;
+        if (isStamped && running !== v.commit && !reloadingForVersion) {
+          reloadingForVersion = true;
+          try {
+            const reg = await navigator.serviceWorker.getRegistration();
+            if (reg) await reg.update().catch(() => {});
+          } catch (_) {}
+          setTimeout(() => location.reload(), 250);
+        }
+      } catch (_) {}
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') checkForUpdate();
+    });
+    window.addEventListener('pageshow', (e) => { if (e.persisted) checkForUpdate(); });
+    window.addEventListener('focus', checkForUpdate);
+    window.addEventListener('online', checkForUpdate);
+    checkForUpdate();
+  })();
 </script>
+<script src="candy.js"></script>
 </body>
 </html>
