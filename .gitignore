@@ -4,3 +4,6 @@
 node_modules/
 *.log
 .vercel
+
+# Generated at build time by scripts/version.js
+version.json

@@ -142,6 +142,7 @@
 
   <footer class="launcher-footer">
     <span>iPad 平板觸控優化</span>
+    <span class="version-badge" id="version-badge" aria-label="version"></span>
   </footer>
 
 </div>
@@ -163,6 +164,16 @@
       }
     });
   }
+
+  // Show the deployed version in the footer
+  fetch('./version.json', { cache: 'no-store' })
+    .then(r => r.ok ? r.json() : null)
+    .then(v => {
+      if (!v || !v.commit) return;
+      const el = document.getElementById('version-badge');
+      if (el) el.textContent = `v ${v.commit} · ${v.date}`;
+    })
+    .catch(() => {});
 </script>
 </body>
 </html>

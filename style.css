@@ -162,7 +162,25 @@ body {
   color: var(--text-light);
   letter-spacing: 2px;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
 }
+
+.version-badge {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: var(--text-light);
+  opacity: 0.7;
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.5);
+}
+.version-badge:empty { display: none; }
 
 /* =============================================================
    TABLET PORTRAIT (iPad)

@@ -154,6 +154,7 @@
         <li><strong>困難</strong> — 挑戰高手，需要高級解題策略</li>
       </ul>
     </div>
+    <div class="modal-version" id="version-info" style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;opacity:0.55;margin-top:14px;letter-spacing:0.5px;text-align:center;"></div>
     <button class="close-btn" id="help-close">知道了</button>
   </div>
 </div>
@@ -180,6 +181,15 @@
       }
     });
   }
+
+  fetch('../version.json', { cache: 'no-store' })
+    .then(r => r.ok ? r.json() : null)
+    .then(v => {
+      if (!v || !v.commit) return;
+      const el = document.getElementById('version-info');
+      if (el) el.textContent = `v ${v.commit} · ${v.date}`;
+    })
+    .catch(() => {});
 </script>
 </body>
 </html>
