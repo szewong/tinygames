@@ -6,13 +6,12 @@
   "scope": "./",
   "display": "standalone",
   "background_color": "#faf7f2",
-  "theme_color": "#5b4a3f",
+  "theme_color": "#c9956b",
   "orientation": "any",
   "icons": [
-    {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%23c9956b'/%3E%3Cg fill='%23faf7f2'%3E%3Crect x='40' y='40' width='44' height='44' rx='8'/%3E%3Crect x='108' y='40' width='44' height='44' rx='8'/%3E%3Crect x='40' y='108' width='44' height='44' rx='8'/%3E%3Crect x='108' y='108' width='44' height='44' rx='8'/%3E%3C/g%3E%3C/svg%3E",
-      "sizes": "192x192",
-      "type": "image/svg+xml"
-    }
+    { "src": "favicon-32.png",           "sizes": "32x32",   "type": "image/png" },
+    { "src": "apple-touch-icon.png",     "sizes": "180x180", "type": "image/png" },
+    { "src": "icon-192.png",             "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png",             "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ]
 }

@@ -80,14 +80,20 @@ body {
   flex: 1 1 0;
   min-height: 0;
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
+  /* Two columns on phones; wider breakpoints override below */
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 14px;
+  overflow-y: auto;
+  align-content: start;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 2px; /* leave room for scrollbar if any */
 }
 
 .game-card {
   background: var(--card);
   border: 3px solid var(--border);
-  border-radius: 28px;
+  border-radius: 24px;
   box-shadow: var(--shadow);
   text-decoration: none;
   color: var(--text);
@@ -95,11 +101,13 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  padding: 24px;
+  gap: 10px;
+  padding: 16px;
   transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
   cursor: pointer;
+  aspect-ratio: 1 / 1;
   min-height: 0;
+  overflow: hidden;
 }
 
 .game-card:active {
@@ -118,10 +126,10 @@ body {
 }
 
 .card-icon svg {
-  height: 100%;
-  max-height: 220px;
-  width: auto;
+  max-height: 100%;
   max-width: 100%;
+  width: auto;
+  height: auto;
 }
 
 .card-text {
@@ -160,32 +168,31 @@ body {
 
 @media (min-width: 748px) and (orientation: portrait) {
   :root {
-    --title-font: 64px;
-    --subtitle-font: 24px;
-    --card-title-font: 56px;
-    --card-subtitle-font: 24px;
+    --title-font: 60px;
+    --subtitle-font: 22px;
+    --card-title-font: 34px;
+    --card-subtitle-font: 18px;
   }
 
   .launcher {
-    padding: 40px 48px;
-    gap: 32px;
+    padding: 28px 36px;
+    gap: 24px;
   }
 
-  .launcher-title { letter-spacing: 24px; }
+  .launcher-title { letter-spacing: 20px; }
 
   .game-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
+    gap: 22px;
   }
 
   .game-card {
     border-width: 4px;
     border-radius: 32px;
-    padding: 28px;
-    gap: 20px;
+    padding: 24px;
+    gap: 16px;
   }
 
-  .card-icon svg { max-height: 240px; }
   .card-title { letter-spacing: 10px; }
 }
 
@@ -195,13 +202,12 @@ body {
 
 @media (min-width: 1024px) and (orientation: portrait) {
   :root {
-    --title-font: 80px;
-    --subtitle-font: 28px;
-    --card-title-font: 64px;
-    --card-subtitle-font: 28px;
+    --title-font: 72px;
+    --subtitle-font: 26px;
+    --card-title-font: 38px;
+    --card-subtitle-font: 20px;
   }
-
-  .card-icon svg { max-height: 340px; }
+  .game-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
 /* =============================================================
@@ -210,10 +216,10 @@ body {
 
 @media (min-width: 700px) and (orientation: landscape) {
   :root {
-    --title-font: 48px;
-    --subtitle-font: 22px;
-    --card-title-font: 48px;
-    --card-subtitle-font: 22px;
+    --title-font: 44px;
+    --subtitle-font: 20px;
+    --card-title-font: 30px;
+    --card-subtitle-font: 16px;
   }
 
   .launcher {
@@ -226,18 +232,25 @@ body {
   .launcher-title { letter-spacing: 20px; }
 
   .game-grid {
-    grid-template-columns: repeat(5, 1fr);
-    gap: 16px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
   }
 
   .game-card {
     border-width: 4px;
-    border-radius: 32px;
-    padding: 32px;
+    border-radius: 28px;
+    padding: 20px;
+    gap: 12px;
   }
 
-  .card-icon svg { max-height: 100%; }
-  .card-title { letter-spacing: 10px; }
+  .card-title { letter-spacing: 6px; }
+}
+
+/* Large landscape (iPad Pro 12.9" landscape, desktops) — 4 cols */
+@media (min-width: 1200px) and (orientation: landscape) {
+  .game-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 /* small phones */

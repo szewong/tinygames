@@ -1,9 +1,16 @@
-const CACHE_NAME = 'tinygames-launcher-v1';
+const CACHE_NAME = 'tinygames-launcher-v2';
 const ASSETS = [
   './',
   './index.html',
   './style.css',
-  './manifest.json'
+  './manifest.json',
+  './icon-source.svg',
+  './favicon-16.png',
+  './favicon-32.png',
+  './apple-touch-icon.png',
+  './apple-touch-icon-167.png',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 self.addEventListener('install', e => {
