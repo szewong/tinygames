@@ -1,9 +1,10 @@
-const CACHE_NAME = 'tinygames-launcher-v3';
+const CACHE_NAME = 'tinygames-launcher-v4';
 const ASSETS = [
   './',
   './index.html',
   './style.css',
   './manifest.json',
+  './qrcode.svg',
   './icon-source.svg',
   './favicon-16.png',
   './favicon-32.png',

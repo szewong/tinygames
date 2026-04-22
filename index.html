@@ -26,6 +26,21 @@
     <p class="launcher-subtitle">輕鬆動腦，隨時可玩</p>
   </header>
 
+  <button class="share-btn" id="share-btn" aria-label="分享">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3" y="3" width="7" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="2"/>
+      <rect x="14" y="3" width="7" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="2"/>
+      <rect x="3" y="14" width="7" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="2"/>
+      <rect x="5.5" y="5.5" width="2" height="2" fill="currentColor"/>
+      <rect x="16.5" y="5.5" width="2" height="2" fill="currentColor"/>
+      <rect x="5.5" y="16.5" width="2" height="2" fill="currentColor"/>
+      <rect x="14" y="14" width="2" height="2" fill="currentColor"/>
+      <rect x="19" y="14" width="2" height="2" fill="currentColor"/>
+      <rect x="14" y="19" width="2" height="2" fill="currentColor"/>
+      <rect x="17" y="17" width="4" height="4" fill="currentColor"/>
+    </svg>
+  </button>
+
   <main class="game-grid">
 
     <a class="game-card sudoku-card" href="sudoku/index.html">
@@ -147,6 +162,22 @@
 
 </div>
 
+<!-- Share modal -->
+<div class="modal-overlay" id="share-modal">
+  <div class="modal share-modal">
+    <h2>分享給朋友</h2>
+    <p class="share-sub">請朋友用相機對準 QR 碼，就可以打開小遊戲</p>
+    <div class="share-qr">
+      <img src="qrcode.svg" alt="QR Code" />
+    </div>
+    <div class="share-url" id="share-url">tinygames.zenithstudio.app</div>
+    <div class="share-actions">
+      <button class="text-btn" id="share-copy">複製網址</button>
+      <button class="text-btn primary" id="share-close">關 閉</button>
+    </div>
+  </div>
+</div>
+
 <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
@@ -174,6 +205,46 @@
       if (el) el.textContent = `v ${v.commit} · ${v.date}`;
     })
     .catch(() => {});
+
+  // Share modal wiring
+  (function () {
+    const shareBtn = document.getElementById('share-btn');
+    const shareModal = document.getElementById('share-modal');
+    const shareClose = document.getElementById('share-close');
+    const shareCopy = document.getElementById('share-copy');
+    const shareUrl = 'https://tinygames.zenithstudio.app';
+
+    function openShare() {
+      if (navigator.share) {
+        navigator.share({ title: '小遊戲', url: shareUrl })
+          .catch(() => shareModal.classList.add('show'));
+      } else {
+        shareModal.classList.add('show');
+      }
+    }
+    function closeShare() { shareModal.classList.remove('show'); }
+
+    shareBtn.addEventListener('click', openShare);
+    shareClose.addEventListener('click', closeShare);
+    shareModal.addEventListener('click', (e) => {
+      if (e.target === shareModal) closeShare();
+    });
+    shareCopy.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        const t = shareCopy.textContent;
+        shareCopy.textContent = '已複製 ✓';
+        setTimeout(() => { shareCopy.textContent = t; }, 1600);
+      } catch (_) {
+        // Fallback: select the URL text
+        const sel = window.getSelection();
+        const range = document.createRange();
+        range.selectNode(document.getElementById('share-url'));
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    });
+  })();
 </script>
 </body>
 </html>
