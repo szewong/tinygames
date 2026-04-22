@@ -1,0 +1,255 @@
+/* ============================================================
+   小遊戲 — Launchpad
+   Warm theme matching the games. Big tap targets for seniors.
+   ============================================================ */
+
+:root {
+  --bg: #faf7f2;
+  --card: #ffffff;
+  --text: #3d3229;
+  --text-light: #8a7d72;
+  --accent: #c9956b;
+  --accent-light: #f5e6d3;
+  --border: #d4c8bb;
+  --shadow: 0 4px 24px rgba(90, 70, 50, 0.10);
+  --shadow-lg: 0 8px 32px rgba(90, 70, 50, 0.14);
+
+  --title-font: 44px;
+  --subtitle-font: 18px;
+  --card-title-font: 36px;
+  --card-subtitle-font: 18px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+html, body {
+  height: 100%;
+  height: 100dvh;
+}
+
+body {
+  font-family: -apple-system, 'PingFang TC', 'Noto Sans TC', 'Helvetica Neue', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+}
+
+.launcher {
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 24px;
+  padding-top: calc(24px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.launcher-header {
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.launcher-title {
+  font-size: var(--title-font);
+  font-weight: 700;
+  letter-spacing: 12px;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.launcher-subtitle {
+  font-size: var(--subtitle-font);
+  color: var(--text-light);
+  letter-spacing: 4px;
+}
+
+/* --- Game grid --- */
+
+.game-grid {
+  flex: 1 1 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.game-card {
+  background: var(--card);
+  border: 3px solid var(--border);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  text-decoration: none;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  cursor: pointer;
+  min-height: 0;
+}
+
+.game-card:active {
+  transform: scale(0.97);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent);
+}
+
+.card-icon {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.card-icon svg {
+  height: 100%;
+  max-height: 220px;
+  width: auto;
+  max-width: 100%;
+}
+
+.card-text {
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.card-title {
+  font-size: var(--card-title-font);
+  font-weight: 700;
+  letter-spacing: 6px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.card-subtitle {
+  font-size: var(--card-subtitle-font);
+  color: var(--text-light);
+  letter-spacing: 2px;
+}
+
+/* Card-specific accent */
+.tetris-card .card-title { color: var(--text); }
+
+.launcher-footer {
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-light);
+  letter-spacing: 2px;
+  flex-shrink: 0;
+}
+
+/* =============================================================
+   TABLET PORTRAIT (iPad)
+   ============================================================= */
+
+@media (min-width: 748px) and (orientation: portrait) {
+  :root {
+    --title-font: 64px;
+    --subtitle-font: 24px;
+    --card-title-font: 56px;
+    --card-subtitle-font: 24px;
+  }
+
+  .launcher {
+    padding: 40px 48px;
+    gap: 32px;
+  }
+
+  .launcher-title { letter-spacing: 24px; }
+
+  .game-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .game-card {
+    border-width: 4px;
+    border-radius: 36px;
+    padding: 36px;
+    gap: 24px;
+  }
+
+  .card-icon svg { max-height: 280px; }
+  .card-title { letter-spacing: 12px; }
+}
+
+/* =============================================================
+   LARGE TABLET PORTRAIT (iPad Pro 12.9")
+   ============================================================= */
+
+@media (min-width: 1024px) and (orientation: portrait) {
+  :root {
+    --title-font: 80px;
+    --subtitle-font: 28px;
+    --card-title-font: 64px;
+    --card-subtitle-font: 28px;
+  }
+
+  .card-icon svg { max-height: 340px; }
+}
+
+/* =============================================================
+   TABLET LANDSCAPE — two cards side by side
+   ============================================================= */
+
+@media (min-width: 700px) and (orientation: landscape) {
+  :root {
+    --title-font: 48px;
+    --subtitle-font: 22px;
+    --card-title-font: 48px;
+    --card-subtitle-font: 22px;
+  }
+
+  .launcher {
+    padding: 28px 36px;
+    padding-left: calc(36px + env(safe-area-inset-left, 0px));
+    padding-right: calc(36px + env(safe-area-inset-right, 0px));
+    gap: 24px;
+  }
+
+  .launcher-title { letter-spacing: 20px; }
+
+  .game-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+  }
+
+  .game-card {
+    border-width: 4px;
+    border-radius: 32px;
+    padding: 32px;
+  }
+
+  .card-icon svg { max-height: 100%; }
+  .card-title { letter-spacing: 10px; }
+}
+
+/* small phones */
+@media (max-width: 380px) {
+  :root {
+    --title-font: 32px;
+    --subtitle-font: 14px;
+    --card-title-font: 26px;
+    --card-subtitle-font: 14px;
+  }
+  .launcher { padding: 16px; gap: 16px; }
+  .launcher-title { letter-spacing: 8px; }
+  .game-card { padding: 18px; border-radius: 22px; gap: 12px; }
+  .card-title { letter-spacing: 4px; }
+}

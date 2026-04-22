@@ -1,0 +1,507 @@
+/* ============================================================
+   Tetris — Warm theme matching Sudoku, iPad-first, senior-friendly
+   ============================================================ */
+
+:root {
+  --bg: #faf7f2;
+  --card: #ffffff;
+  --text: #3d3229;
+  --text-light: #8a7d72;
+  --accent: #c9956b;
+  --accent-light: #f5e6d3;
+  --border: #d4c8bb;
+  --border-thick: #8a7d72;
+  --btn-bg: #f0e8de;
+  --btn-active: #c9956b;
+  --shadow: 0 2px 20px rgba(90, 70, 50, 0.08);
+  --shadow-btn: 0 2px 8px rgba(90, 70, 50, 0.12);
+  --radius: 18px;
+
+  --board-bg: #2b2520;
+  --board-grid: #3a322c;
+
+  /* sizing tokens — overridden by media queries */
+  --title-font: 30px;
+  --stat-label-font: 14px;
+  --stat-value-font: 28px;
+  --ctrl-font: 36px;
+  --ctrl-label-font: 22px;
+  --text-btn-font: 18px;
+  --ctrl-min-h: 70px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+html, body {
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+body {
+  font-family: -apple-system, 'PingFang TC', 'Noto Sans TC', 'Helvetica Neue', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app {
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px 16px;
+  padding-top: calc(14px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* --- Header --- */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: var(--title-font);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 4px;
+}
+
+.help-btn, .back-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--card);
+  color: var(--text-light);
+  font-size: 22px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.help-btn:active, .back-btn:active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* --- Status bar --- */
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 10px;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  box-shadow: var(--shadow);
+  flex-shrink: 0;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 60px;
+}
+
+.stat-label {
+  font-size: var(--stat-label-font);
+  color: var(--text-light);
+  letter-spacing: 1px;
+}
+
+.stat-value {
+  font-size: var(--stat-value-font);
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+.next-stat {
+  min-width: 100px;
+}
+
+#next-canvas {
+  background: transparent;
+}
+
+/* --- Play area --- */
+
+.play-area {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  align-items: center;
+}
+
+.board-wrap {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  /* board aspect ratio is 1:2 (10x20) */
+  aspect-ratio: 1 / 2;
+  max-width: 100%;
+  max-height: 100%;
+  background: var(--board-bg);
+  border: 4px solid var(--border-thick);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+#board {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(43, 37, 32, 0.7);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.overlay-card {
+  background: var(--card);
+  border-radius: 22px;
+  padding: 28px 36px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  max-width: 80%;
+}
+
+.overlay-card h2 {
+  font-size: 28px;
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+
+.overlay-sub {
+  color: var(--text-light);
+  font-size: 16px;
+  margin-bottom: 18px;
+}
+
+/* --- Controls --- */
+
+.controls {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.ctrl-btn {
+  flex: 1;
+  min-height: var(--ctrl-min-h);
+  border: none;
+  border-radius: 16px;
+  background: var(--card);
+  color: var(--text);
+  font-size: var(--ctrl-font);
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-btn);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s, background 0.15s;
+  letter-spacing: 4px;
+}
+
+.ctrl-btn:active {
+  transform: scale(0.95);
+  background: var(--accent-light);
+}
+
+.ctrl-btn.rotate {
+  background: var(--accent-light);
+  color: var(--accent);
+  font-size: calc(var(--ctrl-font) + 6px);
+}
+
+.ctrl-btn.drop {
+  background: var(--accent);
+  color: white;
+  font-size: var(--ctrl-label-font);
+  font-weight: 700;
+}
+
+.ctrl-btn.drop:active {
+  background: #b6845c;
+}
+
+.ctrl-btn.wide {
+  flex: 1;
+}
+
+.footer-row {
+  margin-top: 4px;
+}
+
+.text-btn {
+  flex: 1;
+  padding: 12px 0;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--text);
+  font-size: var(--text-btn-font);
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 2px;
+  transition: all 0.15s;
+}
+
+.text-btn:active {
+  transform: scale(0.96);
+  background: var(--btn-bg);
+}
+
+.text-btn.primary {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.text-btn.primary:active {
+  background: #b6845c;
+}
+
+.primary-btn {
+  padding: 14px 36px;
+  border: none;
+  border-radius: 28px;
+  background: var(--accent);
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 2px;
+  box-shadow: 0 3px 12px rgba(201, 149, 107, 0.3);
+}
+.primary-btn:active { transform: scale(0.96); }
+
+/* --- Modal --- */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 100;
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal {
+  background: var(--card);
+  border-radius: 28px;
+  padding: 36px;
+  text-align: center;
+  max-width: 480px;
+  width: 88%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.modal h2 {
+  font-size: 30px;
+  margin-bottom: 18px;
+  color: var(--text);
+}
+
+.help-content {
+  text-align: left;
+  max-height: 60vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 20px;
+}
+
+.help-content h3 {
+  font-size: 21px;
+  margin: 18px 0 10px;
+  color: var(--accent);
+}
+.help-content h3:first-child { margin-top: 0; }
+
+.help-content p,
+.help-content li {
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.help-content ul {
+  padding-left: 22px;
+  margin-bottom: 14px;
+}
+
+/* =============================================================
+   TABLET PORTRAIT (iPad)
+   ============================================================= */
+
+@media (min-width: 748px) and (orientation: portrait) {
+  :root {
+    --title-font: 44px;
+    --stat-label-font: 20px;
+    --stat-value-font: 38px;
+    --ctrl-font: 50px;
+    --ctrl-label-font: 28px;
+    --text-btn-font: 24px;
+    --ctrl-min-h: 96px;
+  }
+
+  .app { padding: 22px 36px; gap: 14px; }
+  .title { letter-spacing: 8px; }
+  .help-btn, .back-btn { width: 60px; height: 60px; font-size: 28px; }
+
+  .status-bar { padding: 16px 24px; }
+  #next-canvas { width: 140px; height: 90px; }
+  .next-stat { min-width: 140px; }
+
+  .ctrl-btn { border-radius: 20px; }
+  .text-btn { padding: 16px 0; border-radius: 18px; }
+
+  .overlay-card { padding: 36px 48px; }
+  .overlay-card h2 { font-size: 36px; }
+  .overlay-sub { font-size: 22px; }
+  .primary-btn { font-size: 24px; padding: 16px 44px; }
+}
+
+/* =============================================================
+   LARGE TABLET PORTRAIT (iPad Pro 12.9")
+   ============================================================= */
+
+@media (min-width: 1024px) and (orientation: portrait) {
+  :root {
+    --title-font: 52px;
+    --stat-label-font: 24px;
+    --stat-value-font: 46px;
+    --ctrl-font: 60px;
+    --ctrl-label-font: 32px;
+    --text-btn-font: 28px;
+    --ctrl-min-h: 110px;
+  }
+}
+
+/* =============================================================
+   TABLET LANDSCAPE — board left, controls right
+   ============================================================= */
+
+@media (min-width: 700px) and (orientation: landscape) {
+  :root {
+    --title-font: 32px;
+    --stat-label-font: 16px;
+    --stat-value-font: 28px;
+    --ctrl-font: 44px;
+    --ctrl-label-font: 24px;
+    --text-btn-font: 20px;
+    --ctrl-min-h: 84px;
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto 1fr;
+    gap: 10px 24px;
+    padding: 14px 28px;
+    padding-left: calc(28px + env(safe-area-inset-left, 0px));
+    padding-right: calc(28px + env(safe-area-inset-right, 0px));
+    padding-top: calc(14px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .header { grid-column: 1 / -1; }
+  .status-bar { grid-column: 1 / -1; }
+
+  .play-area {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    gap: 24px;
+  }
+
+  .board-wrap {
+    flex: 0 1 auto;
+    height: 100%;
+  }
+
+  .controls {
+    width: auto;
+    min-width: 320px;
+    max-width: 420px;
+    justify-content: center;
+    align-self: center;
+    gap: 14px;
+  }
+}
+
+/* small phones */
+@media (max-width: 380px) {
+  :root {
+    --title-font: 22px;
+    --stat-label-font: 11px;
+    --stat-value-font: 22px;
+    --ctrl-font: 28px;
+    --ctrl-label-font: 16px;
+    --text-btn-font: 14px;
+    --ctrl-min-h: 60px;
+  }
+  .app { padding: 10px 12px; gap: 8px; }
+  .title { letter-spacing: 2px; }
+  .next-stat { min-width: 70px; }
+  #next-canvas { width: 70px; height: 50px; }
+}

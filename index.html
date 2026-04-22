@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="小遊戲">
+  <meta name="theme-color" content="#faf7f2">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23c9956b'/%3E%3Cg fill='%23faf7f2'%3E%3Crect x='22' y='22' width='22' height='22' rx='4'/%3E%3Crect x='56' y='22' width='22' height='22' rx='4'/%3E%3Crect x='22' y='56' width='22' height='22' rx='4'/%3E%3Crect x='56' y='56' width='22' height='22' rx='4'/%3E%3C/g%3E%3C/svg%3E">
+  <title>小遊戲 — 趣味遊戲合集</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="launcher">
+
+  <header class="launcher-header">
+    <h1 class="launcher-title">小 遊 戲</h1>
+    <p class="launcher-subtitle">輕鬆動腦，隨時可玩</p>
+  </header>
+
+  <main class="game-grid">
+
+    <a class="game-card sudoku-card" href="sudoku/index.html">
+      <div class="card-icon">
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <rect x="6" y="6" width="88" height="88" rx="8" fill="#fff" stroke="#8a7d72" stroke-width="3"/>
+          <line x1="35" y1="6"  x2="35" y2="94" stroke="#8a7d72" stroke-width="2"/>
+          <line x1="65" y1="6"  x2="65" y2="94" stroke="#8a7d72" stroke-width="2"/>
+          <line x1="6"  y1="35" x2="94" y2="35" stroke="#8a7d72" stroke-width="2"/>
+          <line x1="6"  y1="65" x2="94" y2="65" stroke="#8a7d72" stroke-width="2"/>
+          <text x="20" y="28" font-family="-apple-system, sans-serif" font-size="22" font-weight="700" fill="#3d3229" text-anchor="middle">5</text>
+          <text x="50" y="58" font-family="-apple-system, sans-serif" font-size="22" font-weight="700" fill="#c9956b" text-anchor="middle">7</text>
+          <text x="80" y="88" font-family="-apple-system, sans-serif" font-size="22" font-weight="700" fill="#3d3229" text-anchor="middle">3</text>
+          <text x="50" y="28" font-family="-apple-system, sans-serif" font-size="22" font-weight="700" fill="#3d3229" text-anchor="middle">2</text>
+          <text x="20" y="88" font-family="-apple-system, sans-serif" font-size="22" font-weight="700" fill="#3d3229" text-anchor="middle">9</text>
+        </svg>
+      </div>
+      <div class="card-text">
+        <div class="card-title">數 獨</div>
+        <div class="card-subtitle">9 × 9 邏輯推理</div>
+      </div>
+    </a>
+
+    <a class="game-card tetris-card" href="tetris/index.html">
+      <div class="card-icon">
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <rect x="6" y="6" width="88" height="88" rx="8" fill="#2b2520"/>
+          <!-- L piece -->
+          <rect x="14" y="62" width="16" height="16" fill="#d99a55" stroke="#3a322c" stroke-width="1"/>
+          <rect x="30" y="62" width="16" height="16" fill="#d99a55" stroke="#3a322c" stroke-width="1"/>
+          <rect x="46" y="62" width="16" height="16" fill="#d99a55" stroke="#3a322c" stroke-width="1"/>
+          <rect x="46" y="46" width="16" height="16" fill="#d99a55" stroke="#3a322c" stroke-width="1"/>
+          <!-- T piece -->
+          <rect x="14" y="78" width="16" height="16" fill="#a87bc5" stroke="#3a322c" stroke-width="1"/>
+          <rect x="30" y="78" width="16" height="16" fill="#a87bc5" stroke="#3a322c" stroke-width="1"/>
+          <rect x="46" y="78" width="16" height="16" fill="#a87bc5" stroke="#3a322c" stroke-width="1"/>
+          <!-- I piece floating -->
+          <rect x="62" y="22" width="16" height="16" fill="#5dc7d8" stroke="#3a322c" stroke-width="1"/>
+          <rect x="62" y="38" width="16" height="16" fill="#5dc7d8" stroke="#3a322c" stroke-width="1"/>
+          <rect x="62" y="54" width="16" height="16" fill="#5dc7d8" stroke="#3a322c" stroke-width="1"/>
+          <rect x="62" y="70" width="16" height="16" fill="#5dc7d8" stroke="#3a322c" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="card-text">
+        <div class="card-title">俄羅斯方塊</div>
+        <div class="card-subtitle">經典消行遊戲</div>
+      </div>
+    </a>
+
+  </main>
+
+  <footer class="launcher-footer">
+    <span>iPad 平板觸控優化</span>
+  </footer>
+
+</div>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+</script>
+</body>
+</html>

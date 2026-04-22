@@ -1,0 +1,752 @@
+/* ============================================================
+   Sudoku — Warm, elegant theme — iPad full-screen first
+   ============================================================ */
+
+:root {
+  --bg: #faf7f2;
+  --card: #ffffff;
+  --text: #3d3229;
+  --text-light: #8a7d72;
+  --accent: #c9956b;
+  --accent-light: #f5e6d3;
+  --selected: #e8d5c0;
+  --highlight: #f3ece4;
+  --same-num: #eddcc8;
+  --error: #e74c3c;
+  --error-bg: #fde8e8;
+  --given: #3d3229;
+  --player: #6b89a8;
+  --border: #d4c8bb;
+  --border-thick: #8a7d72;
+  --notes-color: #a09080;
+  --btn-bg: #f0e8de;
+  --btn-active: #c9956b;
+  --btn-active-text: #fff;
+  --success: #6bcb77;
+  --shadow: 0 2px 20px rgba(90, 70, 50, 0.08);
+  --radius: 18px;
+
+  /* sizing tokens — overridden by media queries */
+  --cell-font: 28px;
+  --note-font: 10px;
+  --num-font: 28px;
+  --title-font: 32px;
+  --diff-font: 16px;
+  --stat-font: 18px;
+  --action-font: 15px;
+  --action-icon: 22px;
+  --newgame-font: 18px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+html, body {
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+body {
+  font-family: -apple-system, 'PingFang TC', 'Noto Sans TC', 'Helvetica Neue', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+/* =============================================================
+   Layout — the grid is king, everything else stays compact
+   ============================================================= */
+
+.app {
+  width: 100%;
+  max-width: 900px;
+  height: 100%;
+  height: 100dvh;
+  padding: 16px 20px;
+  padding-top: calc(16px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* --- Header --- */
+
+.header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.title {
+  font-size: var(--title-font);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 4px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.help-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--card);
+  color: var(--text-light);
+  font-size: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.help-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* --- Status bar --- */
+
+.status-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.difficulty-bar {
+  display: flex;
+  gap: 8px;
+}
+
+.diff-btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 22px;
+  background: var(--btn-bg);
+  color: var(--text-light);
+  font-size: var(--diff-font);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.diff-btn.active {
+  background: var(--accent);
+  color: var(--btn-active-text);
+}
+
+.stats {
+  display: flex;
+  gap: 18px;
+  font-size: var(--stat-font);
+  color: var(--text-light);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stat-icon {
+  font-size: var(--stat-font);
+}
+
+/* =============================================================
+   Grid — takes ALL remaining vertical space
+   ============================================================= */
+
+.grid-container {
+  /* This is the key: flex-grow grabs all leftover height */
+  flex: 1 1 0;
+  /* Keep it square — width matches height */
+  aspect-ratio: 1;
+  /* But never wider than the screen */
+  max-width: 100%;
+  /* Center if narrower than parent */
+  align-self: center;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 4px;
+  border: 3px solid var(--border-thick);
+  /* prevent it from overflowing */
+  min-height: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+  width: 100%;
+  height: 100%;
+  gap: 0;
+}
+
+.grid.loading {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* --- Cells --- */
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--cell-font);
+  font-weight: 500;
+  color: var(--player);
+  border: 0.5px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+  position: relative;
+}
+
+.cell.given {
+  color: var(--given);
+  font-weight: 700;
+}
+
+.cell.selected {
+  background: var(--selected);
+}
+
+.cell.highlight {
+  background: var(--highlight);
+}
+
+.cell.same-num {
+  background: var(--same-num);
+}
+
+.cell.error {
+  color: var(--error);
+  background: var(--error-bg);
+}
+
+/* 3x3 box borders */
+.cell.box-left {
+  border-left: 3px solid var(--border-thick);
+}
+.cell.box-top {
+  border-top: 3px solid var(--border-thick);
+}
+
+/* grid edges */
+.cell:nth-child(9n+1) { border-left: none; }
+.cell:nth-child(-n+9)  { border-top: none; }
+.cell:nth-child(9n)    { border-right: none; }
+.cell:nth-last-child(-n+9) { border-bottom: none; }
+
+/* Round corners */
+.cell:nth-child(1)  { border-top-left-radius: calc(var(--radius) - 5px); }
+.cell:nth-child(9)  { border-top-right-radius: calc(var(--radius) - 5px); }
+.cell:nth-child(73) { border-bottom-left-radius: calc(var(--radius) - 5px); }
+.cell:nth-child(81) { border-bottom-right-radius: calc(var(--radius) - 5px); }
+
+/* --- Notes --- */
+
+.cell.has-notes { padding: 0; }
+
+.note-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-items: center;
+}
+
+.note-grid span {
+  font-size: var(--note-font);
+  color: var(--notes-color);
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* --- Controls wrapper --- */
+
+.controls {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* --- Numpad --- */
+
+.numpad {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 6px;
+  width: 100%;
+}
+
+.num-btn {
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--text);
+  font-size: var(--num-font);
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.num-btn:active {
+  transform: scale(0.93);
+  background: var(--accent-light);
+}
+
+.num-btn.active-num {
+  background: var(--accent);
+  color: white;
+}
+
+.num-btn.num-done {
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+/* --- Action buttons --- */
+
+.actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.action-btn {
+  flex: 1;
+  max-width: 140px;
+  padding: 10px 0;
+  border: none;
+  border-radius: 14px;
+  background: var(--btn-bg);
+  color: var(--text-light);
+  font-size: var(--action-font);
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transition: all 0.15s;
+}
+
+.action-btn:active {
+  transform: scale(0.95);
+}
+
+.action-btn .icon {
+  font-size: var(--action-icon);
+}
+
+.action-btn.active {
+  background: var(--accent);
+  color: white;
+}
+
+.new-game-btn {
+  padding: 12px 32px;
+  border: none;
+  border-radius: 28px;
+  background: var(--accent);
+  color: white;
+  font-size: var(--newgame-font);
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(201, 149, 107, 0.3);
+  transition: all 0.2s;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+}
+
+.new-game-btn:active {
+  transform: scale(0.96);
+}
+
+/* --- Modal --- */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 100;
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal {
+  background: var(--card);
+  border-radius: 28px;
+  padding: 44px;
+  text-align: center;
+  max-width: 480px;
+  width: 85%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  transform: scale(0.9);
+  transition: transform 0.3s;
+}
+
+.modal-overlay.show .modal {
+  transform: scale(1);
+}
+
+.modal h2 {
+  font-size: 32px;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+.modal .subtitle {
+  color: var(--text-light);
+  margin-bottom: 28px;
+  font-size: 19px;
+}
+
+.modal-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 32px;
+}
+
+.modal-stat { text-align: center; }
+
+.modal-stat .label {
+  font-size: 16px;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+
+.modal-stat .value {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* --- Help Modal --- */
+
+.help-content {
+  text-align: left;
+  max-height: 60vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.help-content h3 {
+  font-size: 21px;
+  margin: 20px 0 10px;
+  color: var(--accent);
+}
+
+.help-content h3:first-child { margin-top: 0; }
+
+.help-content p {
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.help-content ul {
+  padding-left: 22px;
+  margin-bottom: 14px;
+}
+
+.help-content li {
+  font-size: 18px;
+  line-height: 1.8;
+  color: var(--text);
+}
+
+.close-btn {
+  margin-top: 24px;
+  padding: 12px 40px;
+  border: none;
+  border-radius: 24px;
+  background: var(--accent);
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* --- Confetti --- */
+
+#confetti {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 200;
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -20px;
+  width: 10px; height: 10px;
+  border-radius: 2px;
+  animation: confetti-fall linear forwards;
+}
+
+@keyframes confetti-fall {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+/* =============================================================
+   TABLET PORTRAIT  (iPad mini 768 → iPad Pro 12.9" 1024)
+   This is the primary play mode for mom.
+   Grid fills ~60% of screen height, numbers are big and clear.
+   ============================================================= */
+
+@media (min-width: 748px) and (orientation: portrait) {
+  :root {
+    --cell-font: clamp(32px, 5.5vw, 52px);
+    --note-font: clamp(12px, 1.8vw, 18px);
+    --num-font: clamp(30px, 5vw, 48px);
+    --title-font: 44px;
+    --diff-font: 22px;
+    --stat-font: 24px;
+    --action-font: 20px;
+    --action-icon: 30px;
+    --newgame-font: 24px;
+  }
+
+  .app {
+    max-width: 100%;
+    padding: 20px 36px;
+    padding-top: calc(20px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    gap: 12px;
+  }
+
+  .title { letter-spacing: 8px; }
+  .help-btn { width: 52px; height: 52px; font-size: 26px; }
+  .diff-btn { padding: 14px 30px; border-radius: 26px; }
+  .stats { gap: 28px; }
+
+  .grid-container {
+    border: 4px solid var(--border-thick);
+    border-radius: 22px;
+    padding: 5px;
+  }
+  .cell.box-left { border-left: 4px solid var(--border-thick); }
+  .cell.box-top  { border-top: 4px solid var(--border-thick); }
+
+  .numpad { gap: 10px; }
+  .num-btn { border-radius: 16px; aspect-ratio: 1; }
+  .actions { gap: 14px; }
+  .action-btn { max-width: 170px; padding: 14px 0; border-radius: 16px; gap: 5px; }
+  .new-game-btn { padding: 16px 48px; border-radius: 32px; }
+
+  .modal { max-width: 520px; padding: 48px; border-radius: 32px; }
+  .modal h2 { font-size: 36px; }
+  .modal .subtitle { font-size: 22px; }
+  .modal-stat .label { font-size: 18px; }
+  .modal-stat .value { font-size: 36px; }
+  .help-content h3 { font-size: 24px; }
+  .help-content p, .help-content li { font-size: 20px; }
+  .close-btn { font-size: 20px; padding: 14px 48px; }
+}
+
+/* =============================================================
+   LARGE TABLET PORTRAIT  (iPad Pro 12.9" — 1024px+)
+   ============================================================= */
+
+@media (min-width: 1024px) and (orientation: portrait) {
+  :root {
+    --cell-font: clamp(40px, 4.5vw, 58px);
+    --note-font: clamp(14px, 1.6vw, 20px);
+    --num-font: clamp(36px, 4.5vw, 54px);
+    --title-font: 52px;
+    --diff-font: 26px;
+    --stat-font: 28px;
+    --action-font: 24px;
+    --action-icon: 34px;
+    --newgame-font: 28px;
+  }
+
+  .app {
+    padding: 28px 48px;
+    padding-top: calc(28px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    gap: 16px;
+  }
+
+  .help-btn { width: 58px; height: 58px; font-size: 30px; }
+  .diff-btn { padding: 16px 36px; border-radius: 28px; }
+
+  .grid-container {
+    border-width: 5px;
+    border-radius: 24px;
+    padding: 6px;
+  }
+  .cell.box-left { border-left-width: 5px; }
+  .cell.box-top  { border-top-width: 5px; }
+  .cell { border-width: 1px; }
+
+  .numpad { gap: 12px; }
+  .num-btn { border-radius: 18px; }
+  .action-btn { max-width: 200px; padding: 16px 0; border-radius: 18px; }
+  .new-game-btn { padding: 20px 56px; border-radius: 36px; }
+
+  .modal { max-width: 600px; padding: 56px; }
+  .modal h2 { font-size: 42px; }
+  .modal .subtitle { font-size: 26px; }
+  .modal-stat .label { font-size: 22px; }
+  .modal-stat .value { font-size: 42px; }
+  .help-content h3 { font-size: 28px; }
+  .help-content p, .help-content li { font-size: 24px; line-height: 1.8; }
+  .close-btn { font-size: 24px; padding: 16px 56px; border-radius: 28px; }
+}
+
+/* =============================================================
+   TABLET LANDSCAPE  — grid left, controls right
+   ============================================================= */
+
+@media (min-width: 700px) and (orientation: landscape) {
+  :root {
+    --cell-font: clamp(24px, 6.5vh, 46px);
+    --note-font: clamp(10px, 2vh, 16px);
+    --num-font: clamp(28px, 6vh, 44px);
+    --title-font: 34px;
+    --diff-font: 20px;
+    --stat-font: 22px;
+    --action-font: 19px;
+    --action-icon: 28px;
+    --newgame-font: 22px;
+  }
+
+  .app {
+    /* Two-column: header/status span full width, then grid + controls side by side */
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto 1fr;
+    align-items: start;
+    max-width: 100%;
+    padding: 12px 24px;
+    padding-left: calc(24px + env(safe-area-inset-left, 0px));
+    padding-right: calc(24px + env(safe-area-inset-right, 0px));
+    padding-top: calc(12px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    gap: 10px 24px;
+  }
+
+  .header {
+    grid-column: 1 / -1;
+  }
+
+  .status-bar {
+    grid-column: 1 / -1;
+  }
+
+  /* Grid: fill all remaining height, stay square */
+  .grid-container {
+    grid-column: 1;
+    grid-row: 3;
+    align-self: stretch;
+    /* height is driven by the row; keep square via aspect-ratio */
+    aspect-ratio: 1;
+    max-width: 100%;
+    /* don't let it exceed the available height */
+    max-height: calc(100dvh - 110px);
+    border: 4px solid var(--border-thick);
+  }
+  .cell.box-left { border-left: 4px solid var(--border-thick); }
+  .cell.box-top  { border-top: 4px solid var(--border-thick); }
+
+  /* Controls: right column, vertically centered */
+  .controls {
+    grid-column: 2;
+    grid-row: 3;
+    align-self: center;
+    width: auto;
+    min-width: 280px;
+    max-width: 360px;
+    gap: 16px;
+  }
+
+  .numpad {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .num-btn {
+    aspect-ratio: 1.2;
+    border-radius: 16px;
+  }
+
+  .actions {
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  .action-btn {
+    flex: 0 0 calc(50% - 6px);
+    max-width: none;
+    padding: 14px 0;
+    border-radius: 16px;
+  }
+
+  .new-game-btn { padding: 16px 40px; }
+}
+
+/* =============================================================
+   SMALL PHONES
+   ============================================================= */
+
+@media (max-width: 380px) {
+  :root {
+    --cell-font: 20px;
+    --note-font: 8px;
+    --num-font: 22px;
+    --title-font: 24px;
+    --diff-font: 13px;
+    --stat-font: 14px;
+    --action-font: 12px;
+    --action-icon: 18px;
+    --newgame-font: 15px;
+  }
+  .app { padding: 10px 12px; gap: 8px; }
+  .diff-btn { padding: 5px 12px; }
+}

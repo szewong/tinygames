@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="數獨">
+  <meta name="theme-color" content="#faf7f2">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+  <title>數獨遊戲</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="title">數 獨</div>
+    <div class="header-right">
+      <button class="help-btn" id="help-btn" aria-label="幫助">?</button>
+    </div>
+  </div>
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <div class="difficulty-bar">
+      <button class="diff-btn active" data-diff="easy">簡單</button>
+      <button class="diff-btn" data-diff="medium">中等</button>
+      <button class="diff-btn" data-diff="hard">困難</button>
+    </div>
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-icon">&#9202;</span>
+        <span id="timer">00:00</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-icon">&#10060;</span>
+        <span id="errors">0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid-container">
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <!-- Controls panel (stacks vertically in portrait, sits beside grid in landscape) -->
+  <div class="controls">
+
+    <!-- Actions -->
+    <div class="actions">
+      <button class="action-btn" id="undo-btn">
+        <span class="icon">&#8630;</span>
+        撤銷
+      </button>
+      <button class="action-btn" id="erase-btn">
+        <span class="icon">&#9003;</span>
+        擦除
+      </button>
+      <button class="action-btn" id="notes-btn">
+        <span class="icon">&#9998;</span>
+        筆記
+      </button>
+      <button class="action-btn" id="hint-btn">
+        <span class="icon">&#128161;</span>
+        提示
+      </button>
+    </div>
+
+    <!-- Numpad -->
+    <div class="numpad" id="numpad">
+      <button class="num-btn" data-num="1">1</button>
+      <button class="num-btn" data-num="2">2</button>
+      <button class="num-btn" data-num="3">3</button>
+      <button class="num-btn" data-num="4">4</button>
+      <button class="num-btn" data-num="5">5</button>
+      <button class="num-btn" data-num="6">6</button>
+      <button class="num-btn" data-num="7">7</button>
+      <button class="num-btn" data-num="8">8</button>
+      <button class="num-btn" data-num="9">9</button>
+    </div>
+
+    <!-- New Game -->
+    <button class="new-game-btn" id="new-game-btn">新遊戲</button>
+
+  </div>
+
+</div>
+
+<!-- Win Modal -->
+<div class="modal-overlay" id="win-modal">
+  <div class="modal">
+    <h2>&#127881; 恭喜通關！</h2>
+    <p class="subtitle">您成功完成了數獨挑戰</p>
+    <div class="modal-stats">
+      <div class="modal-stat">
+        <div class="label">用時</div>
+        <div class="value" id="modal-time">00:00</div>
+      </div>
+      <div class="modal-stat">
+        <div class="label">錯誤</div>
+        <div class="value" id="modal-errors">0</div>
+      </div>
+    </div>
+    <button class="new-game-btn" id="modal-new-game">再來一局</button>
+  </div>
+</div>
+
+<!-- Help Modal (Chinese Instructions) -->
+<div class="modal-overlay" id="help-modal">
+  <div class="modal" style="max-width: 420px;">
+    <h2>遊戲說明</h2>
+    <div class="help-content">
+      <h3>&#127919; 遊戲目標</h3>
+      <p>在 9×9 的格子中填入數字 1 到 9，使得：</p>
+      <ul>
+        <li>每一<strong>行</strong>包含 1-9 各一個</li>
+        <li>每一<strong>列</strong>包含 1-9 各一個</li>
+        <li>每個 <strong>3×3 小方格</strong>包含 1-9 各一個</li>
+      </ul>
+
+      <h3>&#127918; 操作方法</h3>
+      <ul>
+        <li><strong>選擇格子</strong> — 點擊要填寫的空格</li>
+        <li><strong>填入數字</strong> — 點擊下方數字鍵</li>
+        <li><strong>擦除</strong> — 清除當前格子的數字</li>
+        <li><strong>筆記模式</strong> — 在格子中記錄候選數字，幫助推理</li>
+        <li><strong>撤銷</strong> — 撤回上一步操作</li>
+        <li><strong>提示</strong> — 自動填入一個正確答案</li>
+      </ul>
+
+      <h3>&#128161; 小技巧</h3>
+      <ul>
+        <li>先找只能填一個數字的格子</li>
+        <li>善用筆記模式標記候選數字</li>
+        <li>觀察行、列和小方格的已有數字來排除</li>
+        <li>從簡單難度開始練習，逐步提升</li>
+      </ul>
+
+      <h3>&#9881; 難度說明</h3>
+      <ul>
+        <li><strong>簡單</strong> — 適合初學者，留有較多提示數字</li>
+        <li><strong>中等</strong> — 需要一定推理技巧</li>
+        <li><strong>困難</strong> — 挑戰高手，需要高級解題策略</li>
+      </ul>
+    </div>
+    <button class="close-btn" id="help-close">知道了</button>
+  </div>
+</div>
+
+<!-- Confetti container -->
+<div id="confetti"></div>
+
+<script src="game.js"></script>
+</body>
+</html>
