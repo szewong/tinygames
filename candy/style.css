@@ -153,6 +153,22 @@ body {
 
 .stat-value.accent { color: var(--accent-dark); }
 
+/* The target stat is a button — dashed outline hints it's tappable */
+.stat-btn {
+  border: 2px dashed var(--border);
+  background: var(--accent-light);
+  border-radius: 14px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+  font-family: inherit;
+  color: inherit;
+}
+.stat-btn:active {
+  transform: scale(0.96);
+  background: var(--border);
+}
+
 /* --- Board --- */
 
 .board-wrap {
@@ -410,6 +426,55 @@ body {
   color: var(--accent);
 }
 
+/* Target picker */
+.target-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.target-option {
+  padding: 18px 12px;
+  border: 3px solid var(--border);
+  border-radius: 18px;
+  background: var(--card);
+  color: var(--text);
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s;
+  box-shadow: var(--shadow-btn);
+}
+
+.target-option:active {
+  transform: scale(0.96);
+  background: var(--accent-light);
+}
+
+.target-option.current {
+  border-color: var(--accent);
+  background: var(--accent-light);
+  box-shadow: 0 0 0 3px rgba(255, 106, 168, 0.25), var(--shadow-btn);
+}
+
+.target-option .opt-label {
+  font-size: 16px;
+  color: var(--text-light);
+  letter-spacing: 4px;
+  font-weight: 600;
+}
+
+.target-option .opt-value {
+  font-size: 32px;
+  color: var(--accent-dark);
+  font-weight: 800;
+  line-height: 1;
+}
+
 .help-content {
   text-align: left;
   max-height: 60vh;
@@ -462,9 +527,15 @@ body {
 
   .status-bar { padding: 10px 18px; }
   .stat { min-width: 92px; }
+  .stat-btn { padding: 8px 18px; }
 
   .board { border-width: 6px; }
   .text-btn { padding: 14px 0; border-radius: 18px; }
+
+  .target-option { padding: 22px 14px; }
+  .target-option .opt-label { font-size: 22px; letter-spacing: 6px; }
+  .target-option .opt-value { font-size: 44px; }
+  .target-options { gap: 16px; margin-bottom: 22px; }
 }
 
 /* =============================================================

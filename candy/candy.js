@@ -11,7 +11,14 @@
   const SIZE = 8;
   const TYPES = 6;
   const START_MOVES = 30;
-  const TARGET_SCORE = 2000;
+  const DEFAULT_TARGET = 2000;
+  const TARGET_PRESETS = [1000, 2000, 3500, 5000];
+
+  let targetScore = DEFAULT_TARGET;
+  try {
+    const saved = parseInt(localStorage.getItem('candy-target'), 10);
+    if (!Number.isNaN(saved) && saved > 0) targetScore = saved;
+  } catch (_) {}
 
   const POINTS_PER_CANDY = 20;
   const CLEAR_ANIM_MS = 260;
@@ -76,6 +83,10 @@
   const boardEl = document.getElementById('board');
   const boardWrapEl = document.querySelector('.board-wrap');
   const muteBtn = document.getElementById('mute-btn');
+  const targetBtn = document.getElementById('target-btn');
+  const targetModal = document.getElementById('target-modal');
+  const targetOptions = document.getElementById('target-options');
+  const targetCancel = document.getElementById('target-cancel');
 
   // ---------- Sound effects ----------
   // Web Audio synthesis — zero asset bytes, works offline, no autoplay issues.
@@ -517,18 +528,41 @@
   function updateHud() {
     scoreEl.textContent = score;
     movesEl.textContent = moves;
-    targetEl.textContent = TARGET_SCORE;
+    targetEl.textContent = targetScore;
   }
 
   function checkEndConditions() {
     if (gameOver) return;
-    if (score >= TARGET_SCORE) {
+    if (score >= targetScore) {
       gameOver = true;
       showEnd(true);
     } else if (moves <= 0) {
       gameOver = true;
       showEnd(false);
     }
+  }
+
+  function openTargetModal() {
+    // Mark the currently-selected preset for visual feedback
+    const opts = targetOptions.querySelectorAll('.target-option');
+    opts.forEach(btn => {
+      const v = parseInt(btn.dataset.target, 10);
+      btn.classList.toggle('current', v === targetScore);
+    });
+    targetModal.classList.add('show');
+  }
+  function closeTargetModal() {
+    targetModal.classList.remove('show');
+  }
+  function applyTarget(newTarget) {
+    if (newTarget === targetScore) {
+      closeTargetModal();
+      return;
+    }
+    targetScore = newTarget;
+    try { localStorage.setItem('candy-target', String(newTarget)); } catch (_) {}
+    closeTargetModal();
+    newGame();
   }
 
   function showEnd(won) {
@@ -598,6 +632,19 @@
       if (!SFX.isMuted()) SFX.select(); // confirmation blip when unmuting
     });
     refreshMuteBtn();
+
+    // Target picker
+    targetBtn.addEventListener('click', () => { SFX.unlock(); openTargetModal(); });
+    targetCancel.addEventListener('click', closeTargetModal);
+    targetModal.addEventListener('click', (e) => {
+      if (e.target === targetModal) closeTargetModal();
+    });
+    targetOptions.addEventListener('click', (e) => {
+      const btn = e.target.closest('.target-option');
+      if (!btn) return;
+      const v = parseInt(btn.dataset.target, 10);
+      if (!Number.isNaN(v)) applyTarget(v);
+    });
 
     // Unlock audio on the very first pointer/touch anywhere (iOS requirement).
     const firstTouch = () => {

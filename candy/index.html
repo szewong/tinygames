@@ -31,10 +31,10 @@
 
   <!-- Status bar -->
   <div class="status-bar">
-    <div class="stat">
-      <div class="stat-label">目標</div>
+    <button type="button" class="stat stat-btn" id="target-btn" aria-label="變更目標分數">
+      <div class="stat-label">目標 &#9998;</div>
       <div class="stat-value" id="target">2000</div>
-    </div>
+    </button>
     <div class="stat">
       <div class="stat-label">分數</div>
       <div class="stat-value accent" id="score">0</div>
@@ -56,6 +56,33 @@
     <button class="text-btn primary" id="btn-new">新遊戲</button>
   </div>
 
+</div>
+
+<!-- Target picker modal -->
+<div class="modal-overlay" id="target-modal">
+  <div class="modal">
+    <h2>選擇目標分數</h2>
+    <p class="end-sub">改變目標會開始新遊戲</p>
+    <div class="target-options" id="target-options">
+      <button type="button" class="target-option" data-target="1000">
+        <div class="opt-label">輕 鬆</div>
+        <div class="opt-value">1000</div>
+      </button>
+      <button type="button" class="target-option" data-target="2000">
+        <div class="opt-label">普 通</div>
+        <div class="opt-value">2000</div>
+      </button>
+      <button type="button" class="target-option" data-target="3500">
+        <div class="opt-label">挑 戰</div>
+        <div class="opt-value">3500</div>
+      </button>
+      <button type="button" class="target-option" data-target="5000">
+        <div class="opt-label">困 難</div>
+        <div class="opt-value">5000</div>
+      </button>
+    </div>
+    <button class="text-btn" id="target-cancel">取 消</button>
+  </div>
 </div>
 
 <!-- Win/Lose Modal -->
