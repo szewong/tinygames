@@ -74,6 +74,7 @@
 
   // ---------- DOM ----------
   const boardEl = document.getElementById('board');
+  const boardWrapEl = document.querySelector('.board-wrap');
   const scoreEl = document.getElementById('score');
   const movesEl = document.getElementById('moves');
   const targetEl = document.getElementById('target');
@@ -102,6 +103,13 @@
   // ---------- Utilities ----------
   function sleep(ms) {
     return new Promise(r => setTimeout(r, ms));
+  }
+
+  function fitBoard() {
+    const rect = boardWrapEl.getBoundingClientRect();
+    const size = Math.max(0, Math.floor(Math.min(rect.width, rect.height)));
+    boardEl.style.width = size + 'px';
+    boardEl.style.height = size + 'px';
   }
 
   function positionCandy(cell, row, col) {
@@ -457,6 +465,7 @@
     busy = false;
     endModal.classList.remove('show');
 
+    fitBoard();
     buildCellBackdrops();
     initBoard();
     updateHud();
@@ -478,6 +487,16 @@
 
     // Prevent page-level scroll gestures on the game
     document.body.addEventListener('touchmove', (e) => { e.preventDefault(); }, { passive: false });
+
+    // Keep the board square and fitted to available space.
+    // ResizeObserver fires for any layout change that affects board-wrap,
+    // not just window resizes.
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(fitBoard).observe(boardWrapEl);
+    } else {
+      window.addEventListener('resize', fitBoard);
+      window.addEventListener('orientationchange', fitBoard);
+    }
   }
 
   // ---------- Init ----------
