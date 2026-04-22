@@ -223,11 +223,31 @@ body {
 
 .candy.selected {
   z-index: 3;
-  animation: candy-pulse 0.9s ease-in-out infinite;
+  animation: candy-bounce 0.75s ease-in-out infinite;
 }
 
 .candy.selected > svg {
-  filter: drop-shadow(0 0 10px #fff) drop-shadow(0 2px 6px rgba(255,105,170,0.8));
+  filter:
+    drop-shadow(0 0 14px #ffffff)
+    drop-shadow(0 0 10px var(--accent))
+    drop-shadow(0 2px 6px rgba(230, 80, 140, 0.9));
+}
+
+/* Pulsing halo behind the selected candy — unmistakable from across the room */
+.candy.selected::before {
+  content: '';
+  position: absolute;
+  inset: -10%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.70) 0%,
+    rgba(255, 106, 168, 0.55) 38%,
+    rgba(255, 106, 168, 0.00) 70%
+  );
+  animation: halo-pulse 0.75s ease-in-out infinite;
+  z-index: -1;
+  pointer-events: none;
 }
 
 .candy.clearing {
@@ -245,9 +265,16 @@ body {
   transform: scale(0.3);
 }
 
-@keyframes candy-pulse {
-  0%, 100% { transform: scale(1); }
-  50%      { transform: scale(1.12); }
+@keyframes candy-bounce {
+  0%, 100% { transform: scale(1.00) rotate(0deg); }
+  25%      { transform: scale(1.22) rotate(-5deg); }
+  50%      { transform: scale(1.10) rotate(0deg); }
+  75%      { transform: scale(1.22) rotate(5deg); }
+}
+
+@keyframes halo-pulse {
+  0%, 100% { transform: scale(0.85); opacity: 0.55; }
+  50%      { transform: scale(1.30) rotate(180deg); opacity: 1.00; }
 }
 
 .cell.hint {
@@ -416,21 +443,28 @@ body {
 
 @media (min-width: 748px) and (orientation: portrait) {
   :root {
-    --title-font: 40px;
-    --stat-label-font: 20px;
-    --stat-value-font: 42px;
-    --text-btn-font: 24px;
+    --title-font: 38px;
+    --stat-label-font: 18px;
+    --stat-value-font: 36px;
+    --text-btn-font: 22px;
   }
 
-  .app { padding: 22px 36px; gap: 16px; }
-  .title { letter-spacing: 8px; }
-  .help-btn, .back-btn, .icon-btn { width: 60px; height: 60px; font-size: 28px; }
+  /* Trim padding / gap so the board can be as big as possible */
+  .app {
+    max-width: none;
+    padding: 12px 14px;
+    padding-top: calc(12px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    gap: 10px;
+  }
+  .title { letter-spacing: 6px; }
+  .help-btn, .back-btn, .icon-btn { width: 56px; height: 56px; font-size: 26px; }
 
-  .status-bar { padding: 16px 24px; }
-  .stat { min-width: 100px; }
+  .status-bar { padding: 10px 18px; }
+  .stat { min-width: 92px; }
 
   .board { border-width: 6px; }
-  .text-btn { padding: 18px 0; border-radius: 18px; }
+  .text-btn { padding: 14px 0; border-radius: 18px; }
 }
 
 /* =============================================================
@@ -439,11 +473,13 @@ body {
 
 @media (min-width: 1024px) and (orientation: portrait) {
   :root {
-    --title-font: 50px;
-    --stat-label-font: 24px;
-    --stat-value-font: 52px;
-    --text-btn-font: 28px;
+    --title-font: 46px;
+    --stat-label-font: 22px;
+    --stat-value-font: 46px;
+    --text-btn-font: 26px;
   }
+  .app { padding: 14px 20px; gap: 12px; }
+  .status-bar { padding: 14px 22px; }
 }
 
 /* =============================================================
@@ -452,36 +488,39 @@ body {
 
 @media (min-width: 700px) and (orientation: landscape) {
   :root {
-    --title-font: 30px;
-    --stat-label-font: 16px;
-    --stat-value-font: 30px;
-    --text-btn-font: 20px;
+    --title-font: 28px;
+    --stat-label-font: 15px;
+    --stat-value-font: 28px;
+    --text-btn-font: 18px;
   }
 
+  /* Left sidebar holds stats + actions so the board gets the full
+     remaining height on both grid rows */
   .app {
     display: grid;
-    grid-template-columns: 280px 1fr;
-    grid-template-rows: auto auto 1fr auto;
-    gap: 12px 24px;
-    padding: 14px 28px;
-    padding-left: calc(28px + env(safe-area-inset-left, 0px));
-    padding-right: calc(28px + env(safe-area-inset-right, 0px));
-    padding-top: calc(14px + env(safe-area-inset-top, 0px));
-    padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    max-width: none;
+    grid-template-columns: 220px 1fr;
+    grid-template-rows: auto 1fr auto;
+    gap: 10px 16px;
+    padding: 10px 14px;
+    padding-left: calc(14px + env(safe-area-inset-left, 0px));
+    padding-right: calc(14px + env(safe-area-inset-right, 0px));
+    padding-top: calc(10px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
   }
 
-  .header { grid-column: 1 / -1; }
+  .header { grid-column: 1 / -1; grid-row: 1; }
 
   .status-bar {
     grid-column: 1;
-    grid-row: 2 / 4;
+    grid-row: 2;
     flex-direction: column;
-    padding: 20px;
-    gap: 18px;
+    padding: 14px 16px;
+    gap: 14px;
     align-self: start;
   }
 
-  .stat { width: 100%; }
+  .stat { width: 100%; min-width: 0; }
 
   .board-wrap {
     grid-column: 2;
@@ -490,8 +529,9 @@ body {
 
   .actions {
     grid-column: 1;
-    grid-row: 4;
+    grid-row: 3;
     flex-direction: column;
+    align-self: end;
   }
 }
 
