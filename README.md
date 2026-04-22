@@ -12,6 +12,7 @@ PWA play.
 | 數獨 (Sudoku) | `sudoku/` | Existing PWA, dropped in as-is |
 | 俄羅斯方塊 (Tetris) | `tetris/` | New web port from the Pygame source — touch buttons, ghost piece, 7-bag random |
 | 糖果消消樂 (Candy Crush) | `candy/` | 8×8 match-3 — tap candy, tap adjacent to swap; cascades with score multiplier |
+| 2048 數字合成 | `2048/` | Slide-and-merge powers of 2 — big d-pad + swipe, undo, editable target |
 
 The root is a launchpad with two big game tiles. Each game lives in its own
 subdirectory and registers its own service worker for offline play.
