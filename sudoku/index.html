@@ -162,5 +162,24 @@
 <div id="confetti"></div>
 
 <script src="game.js"></script>
+<script>
+  // Auto-refresh when the app resumes and a new version is available
+  // (matters on iPad where PWA resume keeps the old webview snapshot).
+  if ('serviceWorker' in navigator) {
+    let reloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (reloading) return;
+      reloading = true;
+      location.reload();
+    });
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        navigator.serviceWorker.getRegistration()
+          .then(r => r && r.update())
+          .catch(() => {});
+      }
+    });
+  }
+</script>
 </body>
 </html>
