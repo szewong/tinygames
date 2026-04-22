@@ -389,85 +389,40 @@ body {
 }
 
 /* =============================================================
-   TABLET PORTRAIT (iPad)
+   TABLET (iPad — any orientation)
+   The 1:2 board wastes horizontal space if controls stack below it
+   in portrait. Use a side-by-side layout for all tablet sizes so the
+   board fills the full vertical height.
    ============================================================= */
 
-@media (min-width: 748px) and (orientation: portrait) {
+@media (min-width: 700px) {
   :root {
-    --title-font: 44px;
-    --stat-label-font: 20px;
-    --stat-value-font: 38px;
-    --ctrl-font: 50px;
-    --ctrl-label-font: 28px;
-    --text-btn-font: 24px;
-    --ctrl-min-h: 96px;
-  }
-
-  .app { padding: 22px 36px; gap: 14px; }
-  .title { letter-spacing: 8px; }
-  .help-btn, .back-btn { width: 60px; height: 60px; font-size: 28px; }
-
-  .status-bar { padding: 16px 24px; }
-  #next-canvas { width: 140px; height: 90px; }
-  .next-stat { min-width: 140px; }
-
-  .ctrl-btn { border-radius: 20px; }
-  .text-btn { padding: 16px 0; border-radius: 18px; }
-
-  .overlay-card { padding: 36px 48px; }
-  .overlay-card h2 { font-size: 36px; }
-  .overlay-sub { font-size: 22px; }
-  .primary-btn { font-size: 24px; padding: 16px 44px; }
-}
-
-/* =============================================================
-   LARGE TABLET PORTRAIT (iPad Pro 12.9")
-   ============================================================= */
-
-@media (min-width: 1024px) and (orientation: portrait) {
-  :root {
-    --title-font: 52px;
-    --stat-label-font: 24px;
-    --stat-value-font: 46px;
-    --ctrl-font: 60px;
-    --ctrl-label-font: 32px;
-    --text-btn-font: 28px;
-    --ctrl-min-h: 110px;
-  }
-}
-
-/* =============================================================
-   TABLET LANDSCAPE — board left, controls right
-   ============================================================= */
-
-@media (min-width: 700px) and (orientation: landscape) {
-  :root {
-    --title-font: 32px;
-    --stat-label-font: 16px;
-    --stat-value-font: 28px;
-    --ctrl-font: 44px;
-    --ctrl-label-font: 24px;
-    --text-btn-font: 20px;
+    --title-font: 38px;
+    --stat-label-font: 18px;
+    --stat-value-font: 34px;
+    --ctrl-font: 46px;
+    --ctrl-label-font: 26px;
+    --text-btn-font: 22px;
     --ctrl-min-h: 84px;
   }
 
   .app {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-rows: auto auto 1fr;
-    gap: 10px 24px;
-    padding: 14px 28px;
-    padding-left: calc(28px + env(safe-area-inset-left, 0px));
-    padding-right: calc(28px + env(safe-area-inset-right, 0px));
+    padding: 14px 20px;
     padding-top: calc(14px + env(safe-area-inset-top, 0px));
     padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    padding-left: calc(20px + env(safe-area-inset-left, 0px));
+    padding-right: calc(20px + env(safe-area-inset-right, 0px));
+    gap: 12px;
   }
 
-  .header { grid-column: 1 / -1; }
-  .status-bar { grid-column: 1 / -1; }
+  .title { letter-spacing: 8px; }
+  .help-btn, .back-btn { width: 58px; height: 58px; font-size: 28px; }
+
+  .status-bar { padding: 12px 20px; }
+  #next-canvas { width: 130px; height: 80px; }
+  .next-stat { min-width: 130px; }
 
   .play-area {
-    grid-column: 1 / -1;
     flex-direction: row;
     align-items: stretch;
     justify-content: center;
@@ -481,12 +436,38 @@ body {
 
   .controls {
     width: auto;
-    min-width: 320px;
-    max-width: 420px;
+    min-width: 280px;
+    max-width: 440px;
     justify-content: center;
     align-self: center;
     gap: 14px;
   }
+
+  .ctrl-btn { border-radius: 20px; }
+  .text-btn { padding: 14px 0; border-radius: 18px; }
+
+  .overlay-card { padding: 36px 48px; }
+  .overlay-card h2 { font-size: 36px; }
+  .overlay-sub { font-size: 22px; }
+  .primary-btn { font-size: 24px; padding: 16px 44px; }
+}
+
+/* =============================================================
+   LARGE TABLET (iPad Pro 12.9")
+   ============================================================= */
+
+@media (min-width: 1024px) {
+  :root {
+    --title-font: 48px;
+    --stat-label-font: 22px;
+    --stat-value-font: 44px;
+    --ctrl-font: 56px;
+    --ctrl-label-font: 30px;
+    --text-btn-font: 26px;
+    --ctrl-min-h: 100px;
+  }
+
+  .controls { min-width: 360px; max-width: 500px; }
 }
 
 /* small phones */
