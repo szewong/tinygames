@@ -82,7 +82,9 @@ body {
   display: grid;
   /* Two columns on phones; wider breakpoints override below */
   grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: 1fr;
+  /* Let rows size to the square tiles' natural height — don't force 1fr,
+     which fights aspect-ratio and lets content overflow. */
+  grid-auto-rows: min-content;
   gap: 14px;
   overflow-y: auto;
   align-content: start;
