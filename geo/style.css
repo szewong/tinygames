@@ -1,5 +1,6 @@
 /* ============================================================
-   認識世界 — map-based "tap the location" geography game
+   認識世界 — geography knowledge quiz
+   Country → capital / capital → country / country → continent
    ============================================================ */
 
 :root {
@@ -13,13 +14,10 @@
   --accent-light: #d4e6f4;
   --border: #b9d3e7;
   --border-thick: #7aaed1;
-  --ocean: #bfd9ec;
-  --land: #e6d8c3;
-  --land-stroke: #b69d78;
-  --pin: #3d5c7a;
-  --pin-target: #6b8196;
   --correct: #4fb071;
+  --correct-bg: #dcf1e2;
   --wrong: #d95656;
+  --wrong-bg: #f7dede;
   --btn-bg: #eaf2f8;
   --shadow: 0 4px 20px rgba(30, 90, 143, 0.12);
   --shadow-btn: 0 3px 10px rgba(30, 90, 143, 0.15);
@@ -28,11 +26,11 @@
   --title-font: 28px;
   --stat-label-font: 14px;
   --stat-value-font: 28px;
-  --prompt-font: 22px;
-  --prompt-target-font: 30px;
+  --q-pre-font: 20px;
+  --q-main-font: 34px;
+  --flag-font: 72px;
+  --choice-font: 24px;
   --text-btn-font: 18px;
-  --pin-radius: 7;
-  --pin-hit-radius: 22;
 }
 
 * {
@@ -60,7 +58,7 @@ body {
   width: 100%;
   height: 100%;
   height: 100dvh;
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 14px 16px;
   padding-top: calc(14px + env(safe-area-inset-top, 0px));
@@ -70,8 +68,7 @@ body {
   gap: 12px;
 }
 
-/* --- Header --- */
-
+/* Header */
 .header {
   display: flex;
   align-items: center;
@@ -108,8 +105,7 @@ body {
   border-color: var(--accent);
 }
 
-/* --- Status bar --- */
-
+/* Status bar */
 .status-bar {
   display: flex;
   align-items: center;
@@ -162,113 +158,118 @@ body {
   background: var(--border);
 }
 
-/* --- Prompt --- */
-
-.prompt {
+/* Prompt */
+.prompt-wrap {
+  flex: 1 1 0;
+  min-height: 0;
   background: var(--card);
-  border: 2px solid var(--border);
-  border-radius: var(--radius);
-  padding: 14px 20px;
+  border: 3px solid var(--border);
+  border-radius: 24px;
   box-shadow: var(--shadow);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  flex-shrink: 0;
-  flex-wrap: wrap;
+  padding: 24px 20px;
+  gap: 16px;
   text-align: center;
 }
 
-.prompt-label {
-  font-size: var(--prompt-font);
+.q-flag {
+  font-size: var(--flag-font);
+  line-height: 1;
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+  min-height: 0;
+  animation: q-in 0.3s ease-out;
+}
+.q-flag:empty { display: none; }
+
+.q-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.q-pre, .q-post {
+  font-size: var(--q-pre-font);
   color: var(--text-light);
   letter-spacing: 2px;
 }
+.q-pre:empty, .q-post:empty { display: none; }
 
-.prompt-target {
-  font-size: var(--prompt-target-font);
+.q-main {
+  font-size: var(--q-main-font);
   font-weight: 800;
   color: var(--accent);
-  letter-spacing: 3px;
-  padding: 4px 14px;
+  letter-spacing: 4px;
+  padding: 6px 20px;
   background: var(--accent-light);
-  border-radius: 12px;
+  border-radius: 14px;
+  animation: q-in 0.3s ease-out;
 }
 
-/* --- Map --- */
+@keyframes q-in {
+  0%   { transform: scale(0.85); opacity: 0; }
+  100% { transform: scale(1);    opacity: 1; }
+}
 
-.map-wrap {
-  flex: 1 1 0;
-  min-height: 0;
-  background: var(--ocean);
+/* Answer choices */
+.choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.choice {
+  padding: 20px 12px;
   border: 3px solid var(--border);
-  border-radius: 24px;
-  box-shadow: var(--shadow), inset 0 2px 8px rgba(30, 90, 143, 0.08);
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.map {
-  width: 100%;
-  height: 100%;
-  display: block;
-  touch-action: none;
-  cursor: crosshair;
-}
-
-.continent {
-  fill: var(--land);
-  stroke: var(--land-stroke);
-  stroke-width: 1.5;
-  stroke-linejoin: round;
-}
-
-/* Pins */
-.pin-dot {
-  fill: var(--pin);
-  stroke: #ffffff;
-  stroke-width: 1.5;
-  pointer-events: none;
-}
-
-.pin-correct {
-  fill: var(--correct);
-  stroke: #ffffff;
-  stroke-width: 2.5;
-  animation: pin-pulse 0.5s ease-out;
-}
-.pin-wrong {
-  fill: var(--wrong);
-  stroke: #ffffff;
-  stroke-width: 2.5;
-  animation: pin-pulse 0.4s ease-out;
-}
-.pin-label {
-  fill: var(--text);
-  font-family: -apple-system, 'PingFang TC', 'Noto Sans TC', sans-serif;
-  font-size: 14px;
+  border-radius: 18px;
+  background: var(--card);
+  color: var(--text);
+  font-size: var(--choice-font);
   font-weight: 700;
-  text-anchor: middle;
-  paint-order: stroke;
-  stroke: #ffffff;
-  stroke-width: 4;
-  stroke-linejoin: round;
-  pointer-events: none;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  box-shadow: var(--shadow-btn);
+  letter-spacing: 2px;
+  min-height: 72px;
+  text-align: center;
 }
-.pin-label.correct { fill: var(--correct); }
-.pin-label.wrong   { fill: var(--wrong); }
+.choice:active {
+  transform: scale(0.97);
+  background: var(--accent-light);
+}
+.choice.correct {
+  background: var(--correct-bg);
+  border-color: var(--correct);
+  color: var(--correct);
+  animation: pulse-correct 0.4s ease-out;
+}
+.choice.wrong {
+  background: var(--wrong-bg);
+  border-color: var(--wrong);
+  color: var(--wrong);
+  animation: shake-wrong 0.4s ease-out;
+}
+.choice.locked { pointer-events: none; }
 
-@keyframes pin-pulse {
+@keyframes pulse-correct {
   0%   { transform: scale(1); }
-  50%  { transform: scale(1.8); }
+  40%  { transform: scale(1.08); }
   100% { transform: scale(1); }
 }
+@keyframes shake-wrong {
+  0%   { transform: translateX(0); }
+  25%  { transform: translateX(-8px); }
+  50%  { transform: translateX(8px); }
+  75%  { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
 
-/* --- Text buttons --- */
-
+/* Text buttons */
 .text-btn {
   padding: 14px 28px;
   border: 2px solid var(--border);
@@ -283,21 +284,15 @@ body {
   box-shadow: var(--shadow-btn);
   font-family: inherit;
 }
-.text-btn:active {
-  transform: scale(0.96);
-  background: var(--btn-bg);
-}
+.text-btn:active { transform: scale(0.96); background: var(--btn-bg); }
 .text-btn.primary {
   background: var(--accent);
   color: white;
   border-color: var(--accent);
 }
-.text-btn.primary:active {
-  background: var(--accent-dark);
-}
+.text-btn.primary:active { background: var(--accent-dark); }
 
-/* --- Modal --- */
-
+/* Modal */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -390,10 +385,9 @@ body {
 }
 .target-option .opt-label {
   font-size: 18px;
-  color: var(--text-light);
+  color: var(--accent-dark);
   letter-spacing: 4px;
   font-weight: 700;
-  color: var(--accent-dark);
 }
 .target-option .opt-value {
   font-size: 13px;
@@ -427,19 +421,18 @@ body {
 }
 
 /* =============================================================
-   TABLET (iPad) — both orientations
+   TABLET (iPad)
    ============================================================= */
-
 @media (min-width: 700px) {
   :root {
     --title-font: 42px;
     --stat-label-font: 20px;
     --stat-value-font: 40px;
-    --prompt-font: 28px;
-    --prompt-target-font: 42px;
+    --q-pre-font: 30px;
+    --q-main-font: 56px;
+    --flag-font: 140px;
+    --choice-font: 32px;
     --text-btn-font: 22px;
-    --pin-radius: 10;
-    --pin-hit-radius: 28;
   }
 
   .app {
@@ -449,7 +442,7 @@ body {
     padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
     padding-left: calc(24px + env(safe-area-inset-left, 0px));
     padding-right: calc(24px + env(safe-area-inset-right, 0px));
-    gap: 16px;
+    gap: 18px;
   }
 
   .title { letter-spacing: 8px; }
@@ -457,16 +450,47 @@ body {
 
   .status-bar { padding: 14px 22px; }
   .stat { min-width: 110px; }
-  .prompt { padding: 18px 28px; }
-  .prompt-target { padding: 6px 22px; border-radius: 16px; }
 
-  .pin-label { font-size: 18px; stroke-width: 5; }
+  .prompt-wrap { padding: 32px 28px; gap: 22px; }
+  .q-main { padding: 10px 28px; border-radius: 18px; }
+
+  .choices { gap: 16px; }
+  .choice { padding: 28px 16px; min-height: 100px; border-radius: 22px; }
+}
+
+/* Landscape: prompt on left, choices on right */
+@media (min-width: 700px) and (orientation: landscape) {
+  .app {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    grid-template-rows: auto auto 1fr;
+    gap: 14px 24px;
+  }
+
+  .header { grid-column: 1 / -1; }
+  .status-bar { grid-column: 1 / -1; }
+
+  .prompt-wrap {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .choices {
+    grid-column: 2;
+    grid-row: 3;
+    align-self: stretch;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+  .choice { min-height: 0; }
 }
 
 @media (min-width: 1024px) {
   :root {
     --title-font: 52px;
-    --prompt-target-font: 52px;
+    --q-main-font: 68px;
+    --flag-font: 180px;
+    --choice-font: 38px;
   }
 }
 
@@ -476,12 +500,15 @@ body {
     --title-font: 22px;
     --stat-label-font: 11px;
     --stat-value-font: 22px;
-    --prompt-font: 16px;
-    --prompt-target-font: 22px;
+    --q-pre-font: 14px;
+    --q-main-font: 24px;
+    --flag-font: 56px;
+    --choice-font: 17px;
     --text-btn-font: 14px;
   }
   .app { padding: 10px 12px; gap: 10px; }
   .title { letter-spacing: 2px; }
   .stat { min-width: 56px; }
   .target-options { grid-template-columns: 1fr 1fr; }
+  .choice { padding: 14px 8px; min-height: 60px; }
 }

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'geo-v2';
+const CACHE_NAME = 'geo-v3';
 const ASSETS = [
   './',
   './index.html',

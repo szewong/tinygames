@@ -1,7 +1,7 @@
 {
   "name": "認識世界",
   "short_name": "世界",
-  "description": "世界地理遊戲 — 在地圖上點出國家位置",
+  "description": "世界地理知識 — 首都、國家、大洲",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
