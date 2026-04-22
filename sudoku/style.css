@@ -103,7 +103,7 @@ body {
   gap: 14px;
 }
 
-.help-btn {
+.help-btn, .back-btn {
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -116,9 +116,12 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  text-decoration: none;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
-.help-btn:hover { border-color: var(--accent); color: var(--accent); }
+.help-btn:hover, .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+.help-btn:active, .back-btn:active { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
 
 /* --- Status bar --- */
 
@@ -562,7 +565,7 @@ body {
   }
 
   .title { letter-spacing: 8px; }
-  .help-btn { width: 52px; height: 52px; font-size: 26px; }
+  .help-btn, .back-btn { width: 52px; height: 52px; font-size: 26px; }
   .diff-btn { padding: 14px 30px; border-radius: 26px; }
   .stats { gap: 28px; }
 
@@ -614,7 +617,7 @@ body {
     gap: 16px;
   }
 
-  .help-btn { width: 58px; height: 58px; font-size: 30px; }
+  .help-btn, .back-btn { width: 58px; height: 58px; font-size: 30px; }
   .diff-btn { padding: 16px 36px; border-radius: 28px; }
 
   .grid-container {
