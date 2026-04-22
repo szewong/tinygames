@@ -1,0 +1,18 @@
+{
+  "name": "糖果消消樂",
+  "short_name": "糖果",
+  "description": "經典糖果消消樂，為平板觸控優化",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff0f5",
+  "theme_color": "#ff6aa8",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%23ff6aa8'/%3E%3Ccircle cx='60' cy='60' r='26' fill='%23e84545'/%3E%3Crect x='102' y='34' width='52' height='52' rx='10' fill='%237ac142'/%3E%3Ccircle cx='60' cy='130' r='26' fill='%234a90e2'/%3E%3Cpolygon points='128,102 154,118 154,146 128,162 102,146 102,118' fill='%239b59b6'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="糖果消消樂">
+  <meta name="theme-color" content="#ff6aa8">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23ff6aa8'/%3E%3Ccircle cx='32' cy='32' r='14' fill='%23e84545'/%3E%3Crect x='54' y='18' width='28' height='28' rx='6' fill='%237ac142'/%3E%3Ccircle cx='32' cy='68' r='14' fill='%234a90e2'/%3E%3Cpolygon points='68,54 82,62 82,78 68,86 54,78 54,62' fill='%239b59b6'/%3E%3C/svg%3E">
+  <title>糖果消消樂</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Header -->
+  <div class="header">
+    <a class="back-btn" href="../index.html" aria-label="返回">&#8592;</a>
+    <div class="title">糖果消消樂</div>
+    <button class="help-btn" id="help-btn" aria-label="幫助">?</button>
+  </div>
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <div class="stat">
+      <div class="stat-label">目標</div>
+      <div class="stat-value" id="target">2000</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">分數</div>
+      <div class="stat-value accent" id="score">0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">步數</div>
+      <div class="stat-value" id="moves">30</div>
+    </div>
+  </div>
+
+  <!-- Board -->
+  <div class="board-wrap">
+    <div class="board" id="board"></div>
+  </div>
+
+  <!-- Footer actions -->
+  <div class="actions">
+    <button class="text-btn" id="btn-hint">提 示</button>
+    <button class="text-btn primary" id="btn-new">新遊戲</button>
+  </div>
+
+</div>
+
+<!-- Win/Lose Modal -->
+<div class="modal-overlay" id="end-modal">
+  <div class="modal">
+    <h2 id="end-title">&#127881; 恭喜通關！</h2>
+    <p class="end-sub" id="end-sub">您成功達到目標分數</p>
+    <div class="end-stats">
+      <div class="end-stat">
+        <div class="label">分數</div>
+        <div class="value" id="end-score">0</div>
+      </div>
+      <div class="end-stat">
+        <div class="label">剩餘步數</div>
+        <div class="value" id="end-moves">0</div>
+      </div>
+    </div>
+    <button class="primary-btn" id="end-btn">再來一局</button>
+  </div>
+</div>
+
+<!-- Help Modal -->
+<div class="modal-overlay" id="help-modal">
+  <div class="modal">
+    <h2>遊戲說明</h2>
+    <div class="help-content">
+      <h3>&#127919; 遊戲目標</h3>
+      <p>在限定步數內，交換相鄰的糖果，連成三個或以上相同的糖果，達到目標分數！</p>
+
+      <h3>&#127918; 操作方法</h3>
+      <ul>
+        <li><strong>選糖果</strong> — 點一下要移動的糖果，它會亮起來</li>
+        <li><strong>交換</strong> — 再點一下旁邊的糖果，兩者交換</li>
+        <li><strong>取消</strong> — 點同一顆糖果就會取消選擇</li>
+      </ul>
+
+      <h3>&#128161; 小技巧</h3>
+      <ul>
+        <li>交換如果沒有連成三顆，不會扣步數，可以放心嘗試</li>
+        <li>一次消掉越多糖果，分數越高</li>
+        <li>糖果掉下來自動連消，分數會翻倍</li>
+        <li>先看整個盤面，規劃最好的一步</li>
+      </ul>
+
+      <h3>&#9881; 計分</h3>
+      <ul>
+        <li>每顆消掉的糖果：20 分</li>
+        <li>連鎖反應：第 2 次 × 2，第 3 次 × 3…</li>
+      </ul>
+    </div>
+    <button class="primary-btn" id="help-close">知道了</button>
+  </div>
+</div>
+
+<script src="candy.js"></script>
+</body>
+</html>
