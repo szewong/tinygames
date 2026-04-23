@@ -7,3 +7,8 @@ node_modules/
 
 # Generated at build time by scripts/version.js
 version.json
+
+# Playwright test artifacts
+/playwright-report/
+/test-results/
+/playwright/.cache/
