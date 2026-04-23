@@ -27,10 +27,13 @@ const root = path.join(__dirname, '..');
 fs.writeFileSync(path.join(root, 'version.json'), JSON.stringify(version, null, 2) + '\n');
 
 // Stamp every index.html by rewriting `window.APP_VERSION = "anything"`
-// to the fresh hash. Idempotent — runs cleanly on both unstamped files
-// (with the placeholder) and previously-stamped files.
-const stampPattern = /window\.APP_VERSION\s*=\s*"[^"]*"/g;
-const stampReplacement = `window.APP_VERSION = "${sha}"`;
+// to the fresh hash, and every sw.js by replacing the `{{APP_VERSION}}`
+// token in its CACHE_NAME. Stamping sw.js is load-bearing: service workers
+// are cache-first for CSS/JS, so without a fresh CACHE_NAME on every deploy
+// users keep receiving stale assets until they manually clear cache.
+const htmlPattern = /window\.APP_VERSION\s*=\s*"[^"]*"/g;
+const htmlReplacement = `window.APP_VERSION = "${sha}"`;
+const swTokenPattern = /\{\{APP_VERSION\}\}/g;
 
 function walk(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -39,8 +42,14 @@ function walk(dir) {
     if (entry.isDirectory()) walk(full);
     else if (entry.name === 'index.html') {
       let content = fs.readFileSync(full, 'utf8');
-      if (stampPattern.test(content)) {
-        const updated = content.replace(stampPattern, stampReplacement);
+      if (htmlPattern.test(content)) {
+        const updated = content.replace(htmlPattern, htmlReplacement);
+        if (updated !== content) fs.writeFileSync(full, updated);
+      }
+    } else if (entry.name === 'sw.js') {
+      let content = fs.readFileSync(full, 'utf8');
+      if (swTokenPattern.test(content)) {
+        const updated = content.replace(swTokenPattern, sha);
         if (updated !== content) fs.writeFileSync(full, updated);
       }
     }

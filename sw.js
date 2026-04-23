@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tinygames-launcher-v5';
+const CACHE_NAME = 'tinygames-launcher-{{APP_VERSION}}';
 const ASSETS = [
   './',
   './index.html',

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'candy-v7';
+const CACHE_NAME = 'candy-{{APP_VERSION}}';
 const ASSETS = [
   './',
   './index.html',
