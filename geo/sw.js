@@ -1,4 +1,4 @@
-const CACHE_NAME = 'geo-v5';
+const CACHE_NAME = 'geo-{{APP_VERSION}}';
 const ASSETS = [
   './',
   './index.html',
