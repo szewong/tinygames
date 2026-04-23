@@ -1,6 +1,7 @@
 # 小遊戲 — TinyGames
 
-A senior-friendly launching pad for simple iPad-first browser games.
+A senior-friendly launching pad for simple browser games, optimised for both
+iPhone and iPad.
 
 Big fonts, simple controls, traditional Chinese interface, designed for full-screen
 PWA play.
@@ -50,6 +51,27 @@ separate icons on the home screen.
 
 Vanilla HTML / CSS / JS. No build step. Each subdirectory is self-contained and
 could be deployed standalone.
+
+## Responsive testing
+
+Playwright tests exercise every page at iPhone SE / 14 / 15 Pro Max and
+iPad mini / Pro 11" / Pro 12.9" viewports in both orientations, asserting:
+
+- the right CSS branch is matched (phone vs tablet × portrait vs landscape)
+- no horizontal scroll
+- all cards / boards / controls are on-screen (not clipped below the fold)
+- tap targets meet a minimum size
+
+```bash
+npm install
+npm test                  # chromium + webkit, all viewports
+npm run test:ui           # Playwright UI for debugging
+npx playwright test snapshots   # screenshot every page × viewport combo
+npm run test:report       # open the HTML report with attached screenshots
+```
+
+Adding a new viewport or page: extend `tests/viewports.js` and
+`tests/games.spec.js`.
 
 ## Adding another game
 

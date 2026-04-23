@@ -395,7 +395,7 @@ body {
    board fills the full vertical height.
    ============================================================= */
 
-@media (min-width: 700px) {
+@media (min-width: 700px) and (min-height: 500px) {
   :root {
     --title-font: 38px;
     --stat-label-font: 18px;
@@ -456,7 +456,7 @@ body {
    LARGE TABLET (iPad Pro 12.9")
    ============================================================= */
 
-@media (min-width: 1024px) {
+@media (min-width: 1024px) and (min-height: 500px) {
   :root {
     --title-font: 48px;
     --stat-label-font: 22px;
@@ -485,4 +485,64 @@ body {
   .title { letter-spacing: 2px; }
   .next-stat { min-width: 70px; }
   #next-canvas { width: 70px; height: 50px; }
+}
+
+/* =============================================================
+   PHONE LANDSCAPE — short + wide
+   Board on the left, controls on the right. Height is scarce —
+   shrink every control so the 1:2 board can still reach full height.
+   ============================================================= */
+@media (orientation: landscape) and (max-height: 500px) {
+  :root {
+    --title-font: 18px;
+    --stat-label-font: 10px;
+    --stat-value-font: 18px;
+    --ctrl-font: 24px;
+    --ctrl-label-font: 14px;
+    --text-btn-font: 12px;
+    --ctrl-min-h: clamp(34px, 11vh, 48px);
+  }
+  .app {
+    padding: 6px 10px;
+    padding-top: calc(6px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+    padding-left: calc(10px + env(safe-area-inset-left, 0px));
+    padding-right: calc(10px + env(safe-area-inset-right, 0px));
+    gap: 6px;
+  }
+  .title { letter-spacing: 2px; }
+  .help-btn, .back-btn { width: 34px; height: 34px; font-size: 16px; }
+  .status-bar { padding: 5px 10px; }
+  .stat { min-width: 48px; gap: 0; }
+  #next-canvas { width: 52px; height: 36px; }
+  .next-stat { min-width: 60px; }
+
+  .play-area {
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    gap: 10px;
+  }
+  .board-wrap {
+    flex: 0 1 auto;
+    height: 100%;
+    border-width: 2px;
+  }
+  .controls {
+    width: auto;
+    min-width: 160px;
+    max-width: 240px;
+    align-self: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .row { gap: 5px; }
+  .ctrl-btn { border-radius: 10px; letter-spacing: 1px; }
+  .text-btn { padding: 6px 0; border-radius: 10px; letter-spacing: 1px; }
+  .footer-row { margin-top: 2px; }
+
+  .overlay-card { padding: 18px 24px; }
+  .overlay-card h2 { font-size: 20px; }
+  .overlay-sub { font-size: 13px; margin-bottom: 10px; }
+  .primary-btn { font-size: 15px; padding: 9px 22px; }
 }

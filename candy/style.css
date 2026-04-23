@@ -507,7 +507,7 @@ body {
    TABLET PORTRAIT
    ============================================================= */
 
-@media (min-width: 748px) and (orientation: portrait) {
+@media (min-width: 744px) and (orientation: portrait) {
   :root {
     --title-font: 38px;
     --stat-label-font: 18px;
@@ -556,9 +556,10 @@ body {
 
 /* =============================================================
    TABLET LANDSCAPE
+   (min-height guard keeps phones in landscape out of this layout)
    ============================================================= */
 
-@media (min-width: 700px) and (orientation: landscape) {
+@media (min-width: 700px) and (min-height: 500px) and (orientation: landscape) {
   :root {
     --title-font: 28px;
     --stat-label-font: 15px;
@@ -618,4 +619,58 @@ body {
   .app { padding: 10px 12px; gap: 8px; }
   .title { letter-spacing: 2px; }
   .stat { min-width: 56px; }
+}
+
+/* =============================================================
+   PHONE LANDSCAPE — board big, sidebar compact
+   ============================================================= */
+@media (orientation: landscape) and (max-height: 500px) {
+  :root {
+    --title-font: 18px;
+    --stat-label-font: 10px;
+    --stat-value-font: 18px;
+    --text-btn-font: 12px;
+  }
+  .app {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    grid-template-rows: auto 1fr auto;
+    gap: 6px 10px;
+    padding: 6px 10px;
+    padding-left: calc(10px + env(safe-area-inset-left, 0px));
+    padding-right: calc(10px + env(safe-area-inset-right, 0px));
+    padding-top: calc(6px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+  }
+  .header { grid-column: 1 / -1; grid-row: 1; }
+  .title { letter-spacing: 2px; }
+  .help-btn, .back-btn, .icon-btn { width: 32px; height: 32px; font-size: 16px; }
+  .header-actions { gap: 6px; }
+
+  .status-bar {
+    grid-column: 1;
+    grid-row: 2;
+    flex-direction: column;
+    padding: 8px 10px;
+    gap: 6px;
+    align-self: start;
+    border-width: 2px;
+  }
+  .stat { width: 100%; min-width: 0; }
+  .stat-btn { padding: 4px 10px; border-radius: 10px; }
+
+  .board-wrap {
+    grid-column: 2;
+    grid-row: 2 / 4;
+  }
+  .board { border-width: 3px; }
+
+  .actions {
+    grid-column: 1;
+    grid-row: 3;
+    flex-direction: column;
+    align-self: end;
+    gap: 5px;
+  }
+  .text-btn { padding: 7px 0; border-radius: 10px; letter-spacing: 1px; }
 }

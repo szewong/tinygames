@@ -543,7 +543,7 @@ body {
    Grid fills ~60% of screen height, numbers are big and clear.
    ============================================================= */
 
-@media (min-width: 748px) and (orientation: portrait) {
+@media (min-width: 744px) and (orientation: portrait) {
   :root {
     --cell-font: clamp(32px, 5.5vw, 52px);
     --note-font: clamp(12px, 1.8vw, 18px);
@@ -646,9 +646,10 @@ body {
 
 /* =============================================================
    TABLET LANDSCAPE  — grid left, controls right
+   (min-height guard keeps phones in landscape out of this layout)
    ============================================================= */
 
-@media (min-width: 700px) and (orientation: landscape) {
+@media (min-width: 700px) and (min-height: 500px) and (orientation: landscape) {
   :root {
     --cell-font: clamp(24px, 6.5vh, 46px);
     --note-font: clamp(10px, 2vh, 16px);
@@ -752,4 +753,81 @@ body {
   }
   .app { padding: 10px 12px; gap: 8px; }
   .diff-btn { padding: 5px 12px; }
+}
+
+/* =============================================================
+   PHONE LANDSCAPE — short + wide (iPhone in landscape)
+   Two-column layout with the 9×9 grid on the left and a compact
+   numpad + actions on the right. Height is the scarce axis here.
+   ============================================================= */
+
+@media (orientation: landscape) and (max-height: 500px) {
+  :root {
+    --cell-font: clamp(14px, 4.5vh, 22px);
+    --note-font: clamp(7px, 1.5vh, 10px);
+    --num-font: clamp(16px, 4.8vh, 22px);
+    --title-font: 18px;
+    --diff-font: 12px;
+    --stat-font: 13px;
+    --action-font: 11px;
+    --action-icon: 16px;
+    --newgame-font: 13px;
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto 1fr;
+    align-items: start;
+    max-width: 100%;
+    padding: 6px 12px;
+    padding-left: calc(12px + env(safe-area-inset-left, 0px));
+    padding-right: calc(12px + env(safe-area-inset-right, 0px));
+    padding-top: calc(6px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+    gap: 4px 10px;
+  }
+
+  .header, .status-bar { grid-column: 1 / -1; }
+  .title { letter-spacing: 2px; }
+  .help-btn, .back-btn { width: 32px; height: 32px; font-size: 15px; }
+  .diff-btn { padding: 4px 10px; border-radius: 14px; }
+  .stats { gap: 10px; }
+
+  .grid-container {
+    grid-column: 1;
+    grid-row: 3;
+    align-self: stretch;
+    aspect-ratio: 1;
+    max-width: 100%;
+    max-height: calc(100dvh - 70px);
+    border: 2px solid var(--border-thick);
+    padding: 2px;
+  }
+  .cell.box-left { border-left: 2px solid var(--border-thick); }
+  .cell.box-top  { border-top: 2px solid var(--border-thick); }
+
+  .controls {
+    grid-column: 2;
+    grid-row: 3;
+    align-self: center;
+    width: auto;
+    min-width: 160px;
+    max-width: 220px;
+    gap: 6px;
+  }
+
+  .numpad { grid-template-columns: repeat(3, 1fr); gap: 4px; }
+  .num-btn { border-radius: 8px; aspect-ratio: 1.15; }
+
+  .actions { flex-wrap: wrap; gap: 4px; justify-content: center; }
+  .action-btn {
+    flex: 0 0 calc(50% - 3px);
+    max-width: none;
+    padding: 6px 0;
+    border-radius: 8px;
+    gap: 1px;
+  }
+
+  .new-game-btn { padding: 8px 18px; border-radius: 20px; }
 }

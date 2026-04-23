@@ -1,0 +1,22 @@
+{
+  "name": "tinygames",
+  "version": "1.0.0",
+  "description": "A senior-friendly launching pad for simple iPad-first browser games.",
+  "main": "sw.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:report": "playwright show-report"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/szewong/tinygames.git"
+  },
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "http-server": "^14.1.1"
+  }
+}

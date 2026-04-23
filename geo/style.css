@@ -422,8 +422,9 @@ body {
 
 /* =============================================================
    TABLET (iPad)
+   (min-height guard keeps phones in landscape out of this layout)
    ============================================================= */
-@media (min-width: 700px) {
+@media (min-width: 700px) and (min-height: 500px) {
   :root {
     --title-font: 42px;
     --stat-label-font: 20px;
@@ -459,7 +460,7 @@ body {
 }
 
 /* Landscape: prompt on left, choices on right */
-@media (min-width: 700px) and (orientation: landscape) {
+@media (min-width: 700px) and (min-height: 500px) and (orientation: landscape) {
   .app {
     display: grid;
     grid-template-columns: 1.1fr 1fr;
@@ -485,7 +486,7 @@ body {
   .choice { min-height: 0; }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1024px) and (min-height: 500px) {
   :root {
     --title-font: 52px;
     --q-main-font: 68px;
@@ -511,4 +512,69 @@ body {
   .stat { min-width: 56px; }
   .target-options { grid-template-columns: 1fr 1fr; }
   .choice { padding: 14px 8px; min-height: 60px; }
+}
+
+/* =============================================================
+   PHONE LANDSCAPE — prompt left, choices right, tight sizing
+   ============================================================= */
+@media (orientation: landscape) and (max-height: 500px) {
+  :root {
+    --title-font: 18px;
+    --stat-label-font: 10px;
+    --stat-value-font: 18px;
+    --q-pre-font: 13px;
+    --q-main-font: 22px;
+    --flag-font: clamp(32px, 14vh, 54px);
+    --choice-font: 14px;
+    --text-btn-font: 12px;
+  }
+  .app {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    grid-template-rows: auto auto 1fr;
+    gap: 5px 10px;
+    padding: 6px 10px;
+    padding-top: calc(6px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+    padding-left: calc(10px + env(safe-area-inset-left, 0px));
+    padding-right: calc(10px + env(safe-area-inset-right, 0px));
+  }
+  .header { grid-column: 1 / -1; }
+  .status-bar { grid-column: 1 / -1; padding: 4px 10px; }
+  .title { letter-spacing: 2px; }
+  .help-btn, .back-btn { width: 32px; height: 32px; font-size: 15px; }
+  .stat { min-width: 50px; gap: 0; }
+  .stat-btn { padding: 3px 8px; border-radius: 10px; }
+
+  .prompt-wrap {
+    grid-column: 1;
+    grid-row: 3;
+    padding: 10px 12px;
+    gap: 6px;
+    border-width: 2px;
+    border-radius: 14px;
+    min-height: 0;
+  }
+  .q-pre, .q-post { letter-spacing: 1px; }
+  .q-main {
+    padding: 3px 12px;
+    border-radius: 10px;
+    letter-spacing: 2px;
+  }
+
+  .choices {
+    grid-column: 2;
+    grid-row: 3;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 6px;
+    align-self: stretch;
+  }
+  .choice {
+    padding: 6px 6px;
+    min-height: 0;
+    border-width: 2px;
+    border-radius: 10px;
+    letter-spacing: 1px;
+  }
 }
